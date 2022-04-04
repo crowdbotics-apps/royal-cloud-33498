@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpRequest
+from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy as _
 from allauth.account import app_settings as allauth_settings
 from allauth.account.forms import ResetPasswordForm
@@ -74,3 +76,14 @@ class UserSerializer(serializers.ModelSerializer):
 class PasswordSerializer(PasswordResetSerializer):
     """Custom serializer for rest_auth to solve reset password error"""
     password_reset_form_class = ResetPasswordForm
+
+
+class CreatableSlugRelatedField(serializers.SlugRelatedField):
+    
+    def to_internal_value(self, data):
+        try:
+            return self.get_queryset().get_or_create(**{self.slug_field: data})[0]
+        except ObjectDoesNotExist:
+            self.fail('does_not_exist', slug_name=self.slug_field, value=smart_text(data))
+        except (TypeError, ValueError):
+            self.fail('invalid')
