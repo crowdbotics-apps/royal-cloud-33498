@@ -58,3 +58,18 @@ def set_email(email, user):
                                      verified=True, 
                                      primary=True, 
                                      email=email)
+
+def send_feedback(title, body, email):
+    email_body = """\
+            <html>
+            <head>%s</head>
+            <body>
+                <p>
+                %s
+                </p>
+            </body>
+            </html>
+            """ % (title, body)
+    email_msg = EmailMessage("Feedback Response From Jonathan Chu", email_body, from_email='sallar.rezaie@crowdbotics.com', to=[email])
+    email_msg.content_subtype = "html"
+    email_msg.send()

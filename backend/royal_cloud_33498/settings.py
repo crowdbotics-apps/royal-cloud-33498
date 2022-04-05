@@ -70,7 +70,8 @@ LOCAL_APPS = [
     'home',
     'users.apps.UsersConfig',
     'products',
-    'orders'
+    'orders',
+    'feedback'
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
