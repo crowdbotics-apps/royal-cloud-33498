@@ -10,7 +10,8 @@ from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 from rest_framework import serializers
 from rest_auth.serializers import PasswordResetSerializer
-
+from users.serializers import UserProfileSerializer
+from collections import OrderedDict
 
 User = get_user_model()
 
@@ -87,3 +88,21 @@ class CreatableSlugRelatedField(serializers.SlugRelatedField):
             self.fail('does_not_exist', slug_name=self.slug_field, value=smart_text(data))
         except (TypeError, ValueError):
             self.fail('invalid')
+
+
+class UserField(serializers.PrimaryKeyRelatedField):
+    def to_representation(self, value):
+        pk = super(UserField, self).to_representation(value)
+        try:
+           item = User.objects.get(pk=pk)
+           serializer = UserProfileSerializer(item)
+           return serializer.data
+        except User.DoesNotExist:
+           return None
+
+    def get_choices(self, cutoff=None):
+        queryset = self.get_queryset()
+        if queryset is None:
+            return {}
+
+        return OrderedDict([(item.id, str(item)) for item in queryset])
