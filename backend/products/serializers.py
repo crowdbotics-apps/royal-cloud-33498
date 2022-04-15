@@ -1,7 +1,7 @@
 from rest_framework import serializers
-
-from home.api.v1.serializers import CreatableSlugRelatedField
-from .models import Brand, Product
+from .models import Photo, Product
+from collections import OrderedDict
+from products.models import Brand, Category
 
 
 class BrandSerializer(serializers.ModelSerializer):
@@ -13,15 +13,76 @@ class BrandSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CategorySerializer(serializers.ModelSerializer):
+    """
+    A data representation of the Brand of a Product
+    """
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+
+class PhotoSerializer(serializers.ModelSerializer):
+    """
+    A data representation of the multiple Photos of a Product
+    """
+    class Meta:
+        model = Photo
+        exclude = ('product',)
+
+
+class BrandField(serializers.PrimaryKeyRelatedField):
+    def to_representation(self, value):
+        pk = super(BrandField, self).to_representation(value)
+        try:
+           item = Brand.objects.get(pk=pk)
+           serializer = BrandSerializer(item)
+           return serializer.data
+        except Brand.DoesNotExist:
+           return None
+
+    def get_choices(self, cutoff=None):
+        queryset = self.get_queryset()
+        if queryset is None:
+            return {}
+
+        return OrderedDict([(item.id, str(item)) for item in queryset])
+
+
+class CategoryField(serializers.PrimaryKeyRelatedField):
+    def to_representation(self, value):
+        pk = super(CategoryField, self).to_representation(value)
+        try:
+           item = Category.objects.get(pk=pk)
+           serializer = CategorySerializer(item)
+           return serializer.data
+        except Category.DoesNotExist:
+           return None
+
+    def get_choices(self, cutoff=None):
+        queryset = self.get_queryset()
+        if queryset is None:
+            return {}
+
+        return OrderedDict([(item.id, str(item)) for item in queryset])
+
+
 class ProductSerializer(serializers.ModelSerializer):
     """
     A data representation of the Products
     """
-    brand = CreatableSlugRelatedField(
-        slug_field='name',
-        queryset=Brand.objects.all()
-    )
+    brand = BrandField(queryset=Brand.objects.all())
+    category = CategoryField(queryset=Category.objects.all())
+    photos = PhotoSerializer(many=True, required=False)
 
     class Meta:
         model = Product
         fields = '__all__'
+
+
+    def create(self, validated_data):
+        photos = validated_data.pop('photos', None)
+        product = super().create(validated_data)
+        for photo in photos:
+            Photo.objects.create(product=product, **photo)
+        return product

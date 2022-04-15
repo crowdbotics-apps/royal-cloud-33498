@@ -1,37 +1,17 @@
 from django.db import models
-from home.constants import SIZE_TYPE, STATUS_TYPE
+from home.constants import ORDER_STATUS_TYPE, SIZE_TYPE, STATUS_TYPE
 from home.models import UUIDModel
 from users.models import User
 from products.models import Product
 
 
-class Pack(UUIDModel):
+class Cart(UUIDModel):
     """
-    A data representation of a full Pack
+    A data representation of the multiple orders in a Cart
     """
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL,
-                                null=True, related_name="packs")
-    orders = models.ManyToManyField(Order)
-
-
-class Item(UUIDModel):
-    """
-    A data representation of the individual items of a Pack
-    """
-    size = models.CharField(choices=SIZE_TYPE, max_length=5)
-    pack = models.ForeignKey(Pack, related_name='items')
-
-
-class SubOrder(UUIDModel):
-    """
-    A data representation of the multiple suborders an order can be split between
-    """
-    full_quantity = models.PositiveIntegerField(default=0)
-    half_quantity = models.PositiveIntegerField(default=0)
-    full_packs = models.ManyToManyField(Pack)
-    half_pack = models.ForeignKey(Pack, related_name='half_orders')
-    status = models.CharField(choices=STATUS_TYPE, max_length=32)
-
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    total = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
+#TODO: Accept Dummy Order data, then submit and create Orders manually when complete
 
 class Order(UUIDModel):
     """
@@ -41,5 +21,51 @@ class Order(UUIDModel):
                              null=True, related_name='orders')
     product = models.ForeignKey(Product, on_delete=models.SET_NULL,
                                 null=True, related_name='orders')
-    has_half_order = models.BooleanField(default=False)
+    quantity = models.PositiveIntegerField(default=0)
+    status = models.CharField(choices=ORDER_STATUS_TYPE, max_length=32, default="Pending")
+    shipping_cost = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
+    tax = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
+    total = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
 
+
+class SubOrder(UUIDModel):
+    """
+    A data representation of the multiple suborders an order can be split between
+    """
+    order = models.ForeignKey(Order,
+                              on_delete=models.CASCADE,
+                              related_name='suborders',
+                              null=True)
+    half_pack = models.BooleanField(default=False)
+    matching_order = models.OneToOneField("self", null=True, on_delete=models.SET_NULL)
+    status = models.CharField(choices=STATUS_TYPE, max_length=32)
+    items = models.TextField(blank=True)
+    quantity = models.PositiveIntegerField(default=0)
+    subtotal = models.DecimalField(max_digits=7, decimal_places=2)
+
+
+# Order
+# User A
+# T Shirts
+# Yes
+# 15
+# Pending
+# $18
+# $12
+# $99
+
+
+# SubOrder 1
+# False
+# Pending
+# 2XS 2S 2M 2L 2XL
+# 12
+# subtotal = Per Piece Price * 12
+
+
+# SubOrder 2
+# True
+# Unmatched
+# XS S M L XL
+# 3
+# subtotal = Per Piece Price * 3

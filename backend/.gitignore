@@ -5,3 +5,4 @@ env/
 staticfiles/
 postgres-data/
 users/photos
+products/images
