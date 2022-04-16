@@ -86,3 +86,21 @@ class ProductSerializer(serializers.ModelSerializer):
         for photo in photos:
             Photo.objects.create(product=product, **photo)
         return product
+
+
+class ProductField(serializers.PrimaryKeyRelatedField):
+    def to_representation(self, value):
+        pk = super(ProductField, self).to_representation(value)
+        try:
+           item = Product.objects.get(pk=pk)
+           serializer = ProductSerializer(item)
+           return serializer.data
+        except Product.DoesNotExist:
+           return None
+
+    def get_choices(self, cutoff=None):
+        queryset = self.get_queryset()
+        if queryset is None:
+            return {}
+
+        return OrderedDict([(item.id, str(item)) for item in queryset])
