@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from home.utility import set_email, verifyOTP
+from orders.models import Cart
 from users.models import Profile, User
 
 
@@ -40,6 +41,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         Profile.objects.create(user=user)
+        Cart.objects.create(user=user)
         if email:
             set_email(email=email, user=user)
         return user

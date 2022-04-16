@@ -1,5 +1,6 @@
 from django.db import models
 from home.constants import ORDER_STATUS_TYPE, SIZE_TYPE, STATUS_TYPE
+from django.contrib.postgres.fields import ArrayField
 from home.models import UUIDModel
 from users.models import User
 from products.models import Product
@@ -11,7 +12,25 @@ class Cart(UUIDModel):
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     total = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
-#TODO: Accept Dummy Order data, then submit and create Orders manually when complete
+
+
+class CartOrder(UUIDModel):
+    """
+    A data representation of the temporary cart items
+    """
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='orders')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='in_cart')
+    style = models.CharField(max_length=150, blank=True)
+    quantity = models.PositiveIntegerField()
+    total = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
+
+
+class PackingList(UUIDModel):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL,
+                             null=True, related_name='packing_lists')
+    date = models.DateTimeField(auto_now_add=True)
+    total = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
+
 
 class Order(UUIDModel):
     """
@@ -26,6 +45,11 @@ class Order(UUIDModel):
     shipping_cost = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
     tax = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
     total = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
+    packing_list = models.ForeignKey(PackingList,
+                                     on_delete=models.CASCADE,
+                                     related_name='orders',
+                                     blank=True,
+                                     null=True)
 
 
 class SubOrder(UUIDModel):

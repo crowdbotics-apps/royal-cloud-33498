@@ -1,5 +1,8 @@
 from rest_framework import serializers
-from .models import Order, SubOrder
+
+from products.models import Product
+from products.serializers import ProductField
+from .models import Order, SubOrder, CartOrder, Cart, PackingList
 from decimal import Decimal
 
 
@@ -17,6 +20,7 @@ class OrderSerializer(serializers.ModelSerializer):
     A data representation of the Order Object
     """
     suborders = SubOrderSerializer(many=True, required=False)
+    product = ProductField(queryset=Product.objects.all())
 
     class Meta:
         model = Order
@@ -60,7 +64,7 @@ class OrderSerializer(serializers.ModelSerializer):
                 product.save()
             total_cost = total_cost + (product.per_pack_price * Decimal(0.5))
             quantity -= 3
-        if quantity % 6 == 0:
+        if quantity and quantity % 6 == 0:
             SubOrder.objects.create(
                 order=order,
                 status="Pending",
@@ -72,3 +76,40 @@ class OrderSerializer(serializers.ModelSerializer):
             total_cost = total_cost + (product.per_pack_price * Decimal(num_packs))
         order.total = total_cost
         return order
+
+
+class CartOrderSerializer(serializers.ModelSerializer):
+    """
+    A data representation of the temporary orders inside a cart
+    """
+    product = ProductField(queryset=Product.objects.all())
+
+    class Meta:
+        model = CartOrder
+        fields = '__all__'
+
+
+class CartSerializer(serializers.ModelSerializer):
+    """
+    A data representation of the temporary cart of a User
+    """
+    orders = CartOrderSerializer(many=True, required=False)
+
+    class Meta:
+        model = Cart
+        fields = '__all__'
+
+
+class PackingListSerializer(serializers.ModelSerializer):
+    """
+    A data representation of the Packing List of a User submitted to the backend
+    """
+    orders = OrderSerializer(many=True, required=False)
+   
+    class Meta:
+        model = PackingList
+        fields = '__all__'
+
+
+
+#TODO: # ADD TOTAL COST OF CART

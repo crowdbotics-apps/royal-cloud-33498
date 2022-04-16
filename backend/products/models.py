@@ -1,6 +1,7 @@
 from django.db import models
 from home.constants import PRODUCT_TYPE, SIZE_VARIANCE
 from home.models import UUIDModel
+from django.contrib.postgres.fields import ArrayField
 
 
 class Brand(UUIDModel):
@@ -36,7 +37,7 @@ class Product(UUIDModel):
                                  null=True)
     per_pack_price = models.DecimalField(max_digits=7, decimal_places=2)
     per_item_price = models.DecimalField(max_digits=7, decimal_places=2)
-    style = models.CharField(max_length=32, blank=True)
+    styles = ArrayField(models.CharField(max_length=32, blank=True), null=True, blank=True)
     upload_date = models.DateTimeField(auto_now_add=True)
     half_pack_available = models.BooleanField(default=False)
     half_pack_order = models.OneToOneField('orders.SubOrder', on_delete=models.SET_NULL, null=True)
