@@ -6,7 +6,7 @@ from home.api.v1.viewsets import (
     SignupViewSet,
     LoginViewSet,
 )
-from orders.views import CartViewSet, OrderViewSet
+from orders.views import CartViewSet, OrderViewSet, PackingListViewSet
 from products.views import BrandViewSet, CategoryViewSet, ProductViewSet
 from users.viewsets import UserViewSet
 
@@ -15,6 +15,7 @@ router.register("signup", SignupViewSet, basename="signup")
 router.register("login", LoginViewSet, basename="login")
 router.register("users", UserViewSet, basename="users")
 router.register("orders", OrderViewSet, basename="orders")
+router.register("packing-lists", PackingListViewSet, basename="packing_lists")
 router.register("cart", CartViewSet, basename="cart")
 router.register("products", ProductViewSet, basename="products")
 router.register("brands", BrandViewSet, basename="brands")

@@ -4,8 +4,8 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from orders.models import Cart, CartOrder, Order
-from orders.serializers import CartSerializer, OrderSerializer
+from orders.models import Cart, CartOrder, Order, PackingList
+from orders.serializers import CartSerializer, OrderSerializer, PackingListSerializer
 from products.models import Product
 from users.authentication import ExpiringTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -30,6 +30,9 @@ class CartViewSet(ModelViewSet):
     authentication_classes  = [ExpiringTokenAuthentication]
     queryset = Cart.objects.all()
 
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
+
     def create(self, request, *args, **kwargs):
         user = request.user
         product_id = request.data.get('product')
@@ -40,12 +43,15 @@ class CartViewSet(ModelViewSet):
             return Response({'detail': 'Invalid Style Choice'}, status=status.HTTP_400_BAD_REQUEST)
         total_cost = 0
         temp_quantity = quantity
-        if temp_quantity % 6 == 3:
-            total_cost = total_cost + (product.per_pack_price * Decimal(0.5))
-            temp_quantity -= 3
-        if temp_quantity and temp_quantity % 6 == 0:
-            num_packs = temp_quantity / 6
-            total_cost = total_cost + (product.per_pack_price * Decimal(num_packs))
+        if product.type == "Catalog":
+            if temp_quantity % 6 == 3:
+                total_cost = total_cost + (product.per_pack_price * Decimal(0.5))
+                temp_quantity -= 3
+            if temp_quantity and temp_quantity % 6 == 0:
+                num_packs = temp_quantity / 6
+                total_cost = total_cost + (product.per_pack_price * Decimal(num_packs))
+        elif product.type == "Inventory":
+            total_cost = product.per_item_price * quantity
         CartOrder.objects.create(
             cart=user.cart,
             product=product,
@@ -53,5 +59,72 @@ class CartViewSet(ModelViewSet):
             quantity=quantity,
             total=total_cost
         )
+        user.cart.total += total_cost
+        user.cart.save()
         serializer = CartSerializer(user.cart)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['get'])
+    def clear(self, request):
+        cart = request.user.cart
+        cart.total = 0
+        cart.save()
+        CartOrder.objects.filter(cart=cart).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['delete'])
+    def remove_item(self, request):
+        cart = request.user.cart
+        item = request.data.get('item')
+        try:
+            item = CartOrder.objects.get(id=item)
+        except CartOrder.DoesNotExist:
+            return Response({'detail': 'Invalid Item ID'}, status=status.HTTP_400_BAD_REQUEST)
+        price = item.total
+        item.delete()
+        request.user.cart.total -= price
+        request.user.cart.save()
+        serializer = CartSerializer(request.user.cart)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def submit(self, request):
+        user = request.user
+        cart = user.cart
+        packing_list = PackingList.objects.create(user=user)
+        result = []
+        total_price = 0
+        for order in cart.orders.all():
+            data = {
+                "user": user.id,
+                "quantity": order.quantity,
+                "product": order.product.id,
+                "style": order.style
+                }
+            serializer = OrderSerializer(data=data)
+            if serializer.is_valid():
+                # Delete the cart order
+                order.delete()
+                order = serializer.save(packing_list=packing_list)
+                result.append(serializer.data)
+                total_price += order.total
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        cart.total = 0
+        cart.save()
+        packing_list.total = total_price
+        packing_list.save()
+        serializer = PackingListSerializer(packing_list)
+        return Response(serializer.data)
+
+
+class PackingListViewSet(ModelViewSet):
+    serializer_class = PackingListSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes  = [ExpiringTokenAuthentication]
+    queryset = PackingList.objects.all()
+
+    def get_queryset(self):
+        if not self.request.user.is_superuser:
+            return self.request.user.packing_lists.all()
+        return super().get_queryset()

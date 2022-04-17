@@ -11,7 +11,7 @@ class Cart(UUIDModel):
     A data representation of the multiple orders in a Cart
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    total = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
+    total = models.DecimalField(max_digits=7, decimal_places=2, default=0)
 
 
 class CartOrder(UUIDModel):
@@ -40,6 +40,7 @@ class Order(UUIDModel):
                              null=True, related_name='orders')
     product = models.ForeignKey(Product, on_delete=models.SET_NULL,
                                 null=True, related_name='orders')
+    style = models.CharField(max_length=150, blank=True)
     quantity = models.PositiveIntegerField(default=0)
     status = models.CharField(choices=ORDER_STATUS_TYPE, max_length=32, default="Pending")
     shipping_cost = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
@@ -66,30 +67,3 @@ class SubOrder(UUIDModel):
     items = models.TextField(blank=True)
     quantity = models.PositiveIntegerField(default=0)
     subtotal = models.DecimalField(max_digits=7, decimal_places=2)
-
-
-# Order
-# User A
-# T Shirts
-# Yes
-# 15
-# Pending
-# $18
-# $12
-# $99
-
-
-# SubOrder 1
-# False
-# Pending
-# 2XS 2S 2M 2L 2XL
-# 12
-# subtotal = Per Piece Price * 12
-
-
-# SubOrder 2
-# True
-# Unmatched
-# XS S M L XL
-# 3
-# subtotal = Per Piece Price * 3

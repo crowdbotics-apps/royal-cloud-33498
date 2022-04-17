@@ -1,9 +1,12 @@
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
+from home.filters import ProductFilter
 from products.models import Brand, Category, Product
 from products.serializers import BrandSerializer, CategorySerializer, ProductSerializer
 from users.authentication import ExpiringTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from royal_cloud_33498.settings import MAX_PRODUCT_RANGE
+from datetime import date, timedelta
 
 
 class ProductViewSet(ModelViewSet):
@@ -11,8 +14,16 @@ class ProductViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated,)
     authentication_classes  = [ExpiringTokenAuthentication]
     queryset = Product.objects.all()
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['category', 'style', 'half_pack_available', 'type', 'brand']
+    filterset_class = ProductFilter
+
+    def get_queryset(self):
+        if not self.request.user.is_superuser:
+            today = date.today()
+            cutoff_date = today - timedelta(days=int(MAX_PRODUCT_RANGE))
+            return super().get_queryset().filter(upload_date__gte=cutoff_date)
+        return super().get_queryset()
+
+#Check Cutoff Date Logic
 
 
 class BrandViewSet(ModelViewSet):
