@@ -1,12 +1,27 @@
 from django.core.mail import EmailMessage
 from django.utils.translation import ugettext_lazy as _
-from royal_cloud_33498.settings import DEBUG, TWILIO_ACCOUNT_SID, TWILIO_ACCOUNT_TOKEN, TWILIO_MESSAGING_SID
+
+import requests
+from requests.structures import CaseInsensitiveDict
+
+from notifications.models import Notification
+from royal_cloud_33498.settings import DEBUG, FCM_SERVER_KEY, TWILIO_ACCOUNT_SID, TWILIO_ACCOUNT_TOKEN, TWILIO_MESSAGING_SID
 from rest_framework.serializers import ValidationError
 from rest_framework.authtoken.models import Token
 import pyotp
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 from allauth.account.models import EmailAddress
+
+from users.models import User
+
+
+url = "https://fcm.googleapis.com/fcm/send"
+
+headers = CaseInsensitiveDict()
+headers["Accept"] = "application/json"
+headers["Authorization"] = "key={}".format(FCM_SERVER_KEY)
+headers["Content-Type"] = "application/json"
 
 
 def send_otp_sms(phone, otp):
@@ -73,3 +88,42 @@ def send_feedback(title, body, email):
     email_msg = EmailMessage("Feedback Response From Jonathan Chu", email_body, from_email='sallar.rezaie@crowdbotics.com', to=[email])
     email_msg.content_subtype = "html"
     email_msg.send()
+
+
+def send_notification(user, title, content):
+    if user.registration_id:
+        payload = {
+                'to': user.registration_id,
+                'notification': {
+                    "title": title,
+                    "text": content
+                }
+            }
+        resp = requests.post(url, headers=headers, json=payload)
+    Notification.objects.create(
+            user=user,
+            title=title,
+            content=content
+    )
+
+
+def send_notification_to_all(title, content):
+    users = User.objects.filter(flagged=False)
+    registration_ids = []
+    for user in users:
+        Notification.objects.create(
+            user=user,
+            title=title,
+            content=content
+            )
+        if user.registration_id:
+            registration_ids.append(user.registration_id)
+    if registration_ids:
+        payload = {
+                'registration_ids': registration_ids,
+                'notification': {
+                    "title": title,
+                    "text": content
+                }
+            }
+        resp = requests.post(url, headers=headers, json=payload)

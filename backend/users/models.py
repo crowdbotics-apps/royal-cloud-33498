@@ -19,7 +19,9 @@ class User(AbstractUser):
     name = models.CharField(_("Name of User"), blank=True, null=True, max_length=255)
     phone = models.CharField(validators=[phone_regex], max_length=17, unique=True)
     activation_key = models.CharField(max_length=150, blank=True, null=True)
+    registration_id = models.CharField(max_length=255, blank=True)
     otp = models.CharField(max_length=6, blank=True, null=True)
+    flagged = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})

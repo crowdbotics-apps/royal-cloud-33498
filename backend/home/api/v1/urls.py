@@ -6,6 +6,7 @@ from home.api.v1.viewsets import (
     SignupViewSet,
     LoginViewSet,
 )
+from notifications.views import NotificationViewSet
 from orders.views import CartViewSet, OrderViewSet, PackingListViewSet
 from products.views import BrandViewSet, CategoryViewSet, ProductViewSet
 from users.viewsets import UserViewSet
@@ -21,6 +22,7 @@ router.register("products", ProductViewSet, basename="products")
 router.register("brands", BrandViewSet, basename="brands")
 router.register("categories", CategoryViewSet, basename="categories")
 router.register("feedback", FeedbackViewSet, basename="feedback")
+router.register("notifications", NotificationViewSet, basename="notifications")
 
 urlpatterns = [
     path("", include(router.urls)),
