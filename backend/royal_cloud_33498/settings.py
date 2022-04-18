@@ -71,7 +71,8 @@ LOCAL_APPS = [
     'users.apps.UsersConfig',
     'products',
     'orders',
-    'feedback'
+    'feedback',
+    'notifications'
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
@@ -290,3 +291,6 @@ TWILIO_ACCOUNT_TOKEN = env.str("TWILIO_ACCOUNT_TOKEN", "")
 TWILIO_MESSAGING_SID = env.str("TWILIO_MESSAGING_SID", "")
 
 MAX_PRODUCT_RANGE = env.str("MAX_PRODUCT_RANGE", 14)
+MAX_PENDING_ORDERS = env.str("MAX_PENDING_ORDERS", 3)
+
+FCM_SERVER_KEY = env.str("FCM_SERVER_KEY", "")

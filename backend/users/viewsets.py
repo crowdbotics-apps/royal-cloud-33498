@@ -1,3 +1,4 @@
+from this import d
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.decorators import action
@@ -20,6 +21,11 @@ class UserViewSet(ModelViewSet):
     permission_classes = (IsPostOrIsAuthenticated,)
     authentication_classes  = [ExpiringTokenAuthentication]
     queryset = User.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['name', 'last_name', 'phone', "email", "flagged"]
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_superuser=False)
 
     # Create User and return Token + Profile
     def create(self, request, *args, **kwargs):

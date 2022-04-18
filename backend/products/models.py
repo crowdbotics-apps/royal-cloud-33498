@@ -38,7 +38,7 @@ class Product(UUIDModel):
     per_pack_price = models.DecimalField(max_digits=7, decimal_places=2)
     per_item_price = models.DecimalField(max_digits=7, decimal_places=2)
     styles = ArrayField(models.CharField(max_length=32, blank=True), null=True, blank=True)
-    upload_date = models.DateTimeField(auto_now_add=True)
+    upload_date = models.DateField(auto_now_add=True)
     half_pack_available = models.BooleanField(default=False)
     half_pack_orders = JSONField(blank=True, default=dict)
     half_pack_styles = ArrayField(models.CharField(max_length=32, blank=True), null=True, blank=True)

@@ -9,6 +9,3 @@ class ProductFilter(FilterSet):
     class Meta:
          model = Product
          fields = ['category', 'half_pack_available', 'type', 'brand', 'styles', 'upload_date']
-
-
-#CHEECK UPLOAD DATE FILTER AND CHECK CUT OFF DATE LOGIC IN VIEWS

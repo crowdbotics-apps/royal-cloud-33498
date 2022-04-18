@@ -4,15 +4,20 @@ from products.models import Product
 from products.serializers import ProductField
 from .models import Order, SubOrder, CartOrder, Cart, PackingList
 from decimal import Decimal
+from home.utility import send_notification
 
 
 class SubOrderSerializer(serializers.ModelSerializer):
     """
     A data representation of the multiple SubOrders of an Order Object
     """
+    id = serializers.UUIDField(required=False)
+
     class Meta:
         model = SubOrder
         exclude = ('order',)
+        extra_kwargs = {'status': {'required': False},
+                        'subtotal': {'required': False}}
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -20,12 +25,14 @@ class OrderSerializer(serializers.ModelSerializer):
     A data representation of the Order Object
     """
     suborders = SubOrderSerializer(many=True, required=False)
-    product = ProductField(queryset=Product.objects.all())
-    style = serializers.CharField(max_length=64)
+    product = ProductField(queryset=Product.objects.all(), required=False)
+    style = serializers.CharField(max_length=64, required=False)
 
     class Meta:
         model = Order
         fields = '__all__'
+        extra_kwargs = {'product': {'required': False},
+                        'style': {'required': False}}
 
     def create(self, validated_data):
         quantity = validated_data['quantity']
@@ -44,6 +51,12 @@ class OrderSerializer(serializers.ModelSerializer):
                     second_suborder = SubOrder.objects.get(id=second_halfpack)
                     second_suborder.status = "Pending"
                     second_suborder.save()
+                    notif_user = second_suborder.order.user
+                    send_notification(
+                        user=notif_user,
+                        title="Half Pack Confirmation",
+                        content="Your order {} has been submitted and pending shipment".format(second_suborder.order.sid)
+                    )
                     SubOrder.objects.create(
                         order=order,
                         half_pack=True,
@@ -131,3 +144,26 @@ class PackingListSerializer(serializers.ModelSerializer):
         model = PackingList
         fields = '__all__'
 
+
+    def update(self, instance, validated_data):
+        orders_data = validated_data.pop('orders', None)
+        packing_list = super().update(instance, validated_data)
+        if orders_data:
+            for order_data in orders_data:
+                suborders_data = order_data.pop('suborders', None)
+                if suborders_data:
+                    for suborder_data in suborders_data:
+                        suborder = SubOrder.objects.get(id=suborder_data['id'])
+                        serializer = SubOrderSerializer(instance=suborder, data=suborder_data)
+                        if serializer.is_valid():
+                            serializer.save()
+                        else:
+                            raise serializers.ValidationError(serializer.errors)
+                serializer = OrderSerializer(instance=suborder.order, data=order_data)
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    raise serializers.ValidationError(serializer.errors)
+        # Recalculate packing list totals
+        packing_list.save()
+        return packing_list

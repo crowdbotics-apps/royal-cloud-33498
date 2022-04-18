@@ -7,6 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from orders.models import Cart, CartOrder, Order, PackingList
 from orders.serializers import CartSerializer, OrderSerializer, PackingListSerializer
 from products.models import Product
+from royal_cloud_33498.settings import MAX_PENDING_ORDERS
 from users.authentication import ExpiringTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
@@ -52,13 +53,20 @@ class CartViewSet(ModelViewSet):
                 total_cost = total_cost + (product.per_pack_price * Decimal(num_packs))
         elif product.type == "Inventory":
             total_cost = product.per_item_price * quantity
-        CartOrder.objects.create(
-            cart=user.cart,
-            product=product,
-            style=style,
-            quantity=quantity,
-            total=total_cost
-        )
+        try:
+            existing_order = CartOrder.objects.get(cart=user.cart, product=product, style=style)
+        except CartOrder.DoesNotExist:
+            CartOrder.objects.create(
+                cart=user.cart,
+                product=product,
+                style=style,
+                quantity=quantity,
+                total=total_cost
+            )
+        else:
+            existing_order.quantity += quantity
+            existing_order.total += total_cost
+            existing_order.save()
         user.cart.total += total_cost
         user.cart.save()
         serializer = CartSerializer(user.cart)
@@ -91,6 +99,9 @@ class CartViewSet(ModelViewSet):
     def submit(self, request):
         user = request.user
         cart = user.cart
+        if user.flagged:
+            return Response({"detail": "You are restricted from placing an order at the moment"},
+                             status=status.HTTP_400_BAD_REQUEST)
         packing_list = PackingList.objects.create(user=user)
         result = []
         total_price = 0
@@ -113,6 +124,7 @@ class CartViewSet(ModelViewSet):
         cart.total = 0
         cart.save()
         packing_list.total = total_price
+        packing_list.after_tax_total = packing_list.total + packing_list.tax + packing_list.shipping_cost
         packing_list.save()
         serializer = PackingListSerializer(packing_list)
         return Response(serializer.data)
@@ -123,6 +135,8 @@ class PackingListViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated,)
     authentication_classes  = [ExpiringTokenAuthentication]
     queryset = PackingList.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['user', 'date', 'status']
 
     def get_queryset(self):
         if not self.request.user.is_superuser:
