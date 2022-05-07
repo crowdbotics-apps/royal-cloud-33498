@@ -25,13 +25,13 @@ headers["Content-Type"] = "application/json"
 
 
 def send_otp_sms(phone, otp):
-    if DEBUG:
+    if not DEBUG:
         try:
             client = Client(TWILIO_ACCOUNT_SID, TWILIO_ACCOUNT_TOKEN) 
             message = client.messages.create(  
                                         messaging_service_sid=TWILIO_MESSAGING_SID, 
                                         body='Your OTP is {}'.format(otp),      
-                                        to='+1{}'.format(phone) 
+                                        to=phone
                                     )
         except TwilioRestException as e:
             raise ValidationError('Please enter a valid North American phone number excluding country code {}').format(e)
