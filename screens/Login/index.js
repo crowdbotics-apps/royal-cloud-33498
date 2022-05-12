@@ -81,7 +81,7 @@ function LoginScreen ({ navigation }) {
       handleChange('loading', false)
       console.warn('err', error)
       const errorText = Object.values(error?.response?.data)
-      Toast.show(`Error: ${errorText}`)
+      Toast.show(`Error: ${errorText[0]}`)
     }
   }
 
@@ -105,8 +105,7 @@ function LoginScreen ({ navigation }) {
     } catch (error) {
       handleChange('loading', false)
       const errorText = Object.values(error?.response?.data)
-      console.warn('err', error?.response?.data)
-      Toast.show(`Error: ${errorText}`)
+      Toast.show(`Error: ${errorText[0]}`)
     }
   }
 

@@ -34,9 +34,9 @@ function Verification ({ navigation, route }) {
   const handleVerify = async () => {
     try {
       handleChange('loading', true)
-      const email = route?.params.email
+      const phone = route?.params.phone
       const payload = {
-        email,
+        phone,
         otp
       }
       const res = await verifyEmail(payload)

@@ -226,7 +226,6 @@ function Profile ({ navigation }) {
             loading={loading}
             disabled={
               !name ||
-              !shipping_address ||
               !city ||
               !zip_code ||
               !selectState ||
