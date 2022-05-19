@@ -16,6 +16,7 @@ import { connectors } from "@store"
 const Stack = createStackNavigator()
 
 import { GlobalOptionsContext, OptionsContext, getOptions } from "@options"
+import { SafeAreaView } from "react-native"
 
 const getNavigation = (modules, screens, initialRoute) => {
   const Navigation = () => {
@@ -78,7 +79,9 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <Navigation />
+      <SafeAreaView style={{ flex: 1 }}>
+        <Navigation />
+      </SafeAreaView>
     </Provider>
   )
 }
