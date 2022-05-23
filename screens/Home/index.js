@@ -23,11 +23,13 @@ function Home ({ navigation }) {
           <AppButton
             marginTop={hp(5)}
             outlined
+            onPress={() => navigation.navigate('Products')}
             title={'HALF PACKS'}
             backgroundColor={COLORS.white}
           />
           <AppButton
             marginTop={hp(5)}
+            onPress={() => navigation.navigate('Inventory')}
             outlined
             title={'INVENTORY'}
             backgroundColor={COLORS.white}

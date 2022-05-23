@@ -51,18 +51,15 @@ const FullCalendar = ({ date, handleChange, openCalendar }) => {
       [date]: {
         selected: true,
         disableTouchEvent: true,
-        selectedColor: COLORS.primary04,
-        selectedTextColor: COLORS.darkBlack
+        selectedColor: COLORS.primary,
+        selectedTextColor: COLORS.white
       }
     }
   }, [date])
 
   return (
     <View style={styles.container}>
-      <View style={styles.row}>
-        <TouchableOpacity onPress={handleOpen}>
-          <SvgXml xml={CalendarIcon} />
-        </TouchableOpacity>
+      {/* <View style={styles.row}>
         <View style={styles.rowDate}>
           <TouchableOpacity onPress={() => onChangeWeek('left')}>
             <Icon
@@ -91,15 +88,14 @@ const FullCalendar = ({ date, handleChange, openCalendar }) => {
             />
           </TouchableOpacity>
         </View>
-      </View>
+      </View> */}
 
       <Calendar
-        // ref={refCalendar}
-        style={{ marginTop: -20, zIndex: -1 }}
-        renderHeader={() => <View style={{ height: 30 }} />}
+        ref={refCalendar}
+        // renderHeader={() => <View style={{ height: 30 }} />}
         onDayPress={onDateChanged}
         current={date}
-        hideArrows
+        // hideArrows
         firstDay={1}
         enableSwipeMonths
         markedDates={marked}
@@ -136,7 +132,11 @@ const FullCalendar = ({ date, handleChange, openCalendar }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%'
+    width: '90%',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    padding: 10
   },
   date: {
     fontFamily: FONT1BOLD,
@@ -157,8 +157,8 @@ const styles = StyleSheet.create({
   rowDate: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    width: '95%'
+    justifyContent: 'space-between',
+    width: '100%'
   }
 })
 

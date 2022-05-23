@@ -15,6 +15,7 @@ export default function Header ({
   back,
   logo,
   menu,
+  menuClick,
   tab,
   tabText
 }) {
@@ -47,10 +48,7 @@ export default function Header ({
       )}
       {title && <Text style={styles.title}>{title}</Text>}
       {menu && (
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.menuView}
-        >
+        <TouchableOpacity onPress={menuClick} style={styles.menuView}>
           <SvgXml xml={menuIcon} />
         </TouchableOpacity>
       )}
