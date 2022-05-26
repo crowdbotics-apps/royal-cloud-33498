@@ -5,11 +5,13 @@ import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import ProductImage from '../../assets/images/product.png'
 import { COLORS, FONT1BOLD, FONT1REGULAR } from '../../constants'
 
-export default function Product ({ active, item }) {
+export default function Product ({ active, item, inventory }) {
   const navigation = useNavigation()
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('InventoryDetails', { product: item })}
+      onPress={() =>
+        navigation.navigate('InventoryDetails', { product: item, inventory })
+      }
       style={[styles.container, { width: !active ? '100%' : '48%' }]}
     >
       <Image

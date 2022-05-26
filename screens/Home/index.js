@@ -17,13 +17,14 @@ function Home ({ navigation }) {
           <AppButton
             marginTop={hp(5)}
             outlined
+            onPress={() => navigation.navigate('Products', { halfpack: false })}
             title={'ORDERS'}
             backgroundColor={COLORS.white}
           />
           <AppButton
             marginTop={hp(5)}
             outlined
-            onPress={() => navigation.navigate('Products')}
+            onPress={() => navigation.navigate('Products', { halfpack: true })}
             title={'HALF PACKS'}
             backgroundColor={COLORS.white}
           />

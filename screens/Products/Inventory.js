@@ -10,7 +10,13 @@ import {
 } from 'react-native'
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { SvgXml } from 'react-native-svg'
-import { AppButton, CustomModal, Header, Product } from '../../components'
+import {
+  AppButton,
+  CustomModal,
+  FullCalendar,
+  Header,
+  Product
+} from '../../components'
 import { COLORS, FONT1REGULAR, FONT1SEMIBOLD } from '../../constants'
 import Square from '../../assets/svg/square.svg'
 import Square4 from '../../assets/svg/4square.svg'
@@ -26,10 +32,11 @@ function Inventory ({ navigation }) {
     active: 0,
     filterOpen: false,
     halfPack: false,
-    category: false
+    category: false,
+    date: Date.now()
   })
 
-  const { active, filterOpen, halfPack, category } = state
+  const { active, filterOpen, halfPack, category, date } = state
 
   const handleChange = (name, value) => {
     setState(pre => ({ ...pre, [name]: value }))
@@ -43,9 +50,11 @@ function Inventory ({ navigation }) {
   )
 
   const handleFilter = () => {
-    const payload = `?half_pack_available=${halfPack}&type=${
-      category ? 'Catalog' : 'Inventory'
-    }`
+    // const payload = `?half_pack_available=${halfPack}&type=${
+    //   category ? 'Catalog' : 'Inventory'
+    // }`
+    const payload = `?upload_date=${date}`
+
     _getProducts(payload)
     handleChange('filterOpen', false)
   }
@@ -115,15 +124,18 @@ function Inventory ({ navigation }) {
         style={styles.flatList}
         keyExtractor={item => '_' + item}
         renderItem={({ item, index }) => {
-          return <Product key={index} item={item} active={active} />
+          return (
+            <Product key={index} item={item} inventory={true} active={active} />
+          )
         }}
       />
       <CustomModal
         visible={filterOpen}
+        height={'90%'}
         onClose={() => handleChange('filterOpen', false)}
       >
         <View style={styles.modalView}>
-          <View style={styles.rowAround}>
+          {/* <View style={styles.rowAround}>
             <BouncyCheckbox
               size={25}
               fillColor={COLORS.primary}
@@ -154,7 +166,8 @@ function Inventory ({ navigation }) {
               style={{ marginVertical: 20 }}
               onPress={() => handleChange('category', !category)}
             />
-          </View>
+          </View> */}
+          <FullCalendar handleChange={handleChange} date={date} />
           <View style={styles.buttonWidth}>
             <AppButton title={'APPLY'} onPress={handleFilter} />
           </View>

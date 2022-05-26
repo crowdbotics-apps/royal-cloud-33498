@@ -8,6 +8,7 @@ import Settings from '../screens/Settings'
 import Products from '../screens/Products'
 import Inventory from '../screens/Products/Inventory'
 import InventoryDetails from '../screens/Products/Details'
+import Cart from '../screens/Cart'
 
 const Stack = createStackNavigator()
 
@@ -23,7 +24,7 @@ function MainTabNav () {
       tabBar={props => <TabBar {...props} />}
     >
       <Tab.Screen name='Home' component={HomeStack} />
-      <Tab.Screen name='Cart' component={Home} />
+      <Tab.Screen name='Cart' component={Cart} />
       <Tab.Screen name='Settings' component={Settings} />
       <Tab.Screen name='Inventory' component={InventoryStack} />
     </Tab.Navigator>

@@ -25,7 +25,10 @@ import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import AppContext from '../../store/Context'
 import { useFocusEffect } from '@react-navigation/native'
 
-function Products ({ navigation }) {
+function Products ({ navigation, route }) {
+  // params
+
+  const halfpack = route?.params?.halfpack
   // Context
   const context = useContext(AppContext)
   const { productLoading, products, _getProducts } = context
@@ -45,7 +48,7 @@ function Products ({ navigation }) {
 
   useFocusEffect(
     useCallback(() => {
-      const payload = `?half_pack_available=true&type=Catalog`
+      const payload = halfpack ? `?half_pack_available=true&type=Catalog` : ''
       _getProducts(payload)
     }, [])
   )
@@ -56,7 +59,6 @@ function Products ({ navigation }) {
     handleChange('filterOpen', false)
   }
 
-  console.warn('products', products)
   return (
     <View style={styles.container}>
       <Header
