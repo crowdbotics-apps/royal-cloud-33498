@@ -41,7 +41,7 @@ function Settings ({ navigation }) {
   const list = [
     { title: 'Privacy Policy', route: 'PrivacyPolicy' },
     { title: 'Terms & Conditions', route: 'TermsCondition' },
-    { title: 'Send Feedback', route: 'SendFeedback' }
+    { title: 'Send Feedback', route: 'FeedBack' }
   ]
 
   return (

@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import React, { useState } from 'react'
+import { getUsers } from '../../api/admin'
 import { getCart, getProducts } from '../../api/customer'
 import RootStackNav from '../../navigation/RootStackNav'
 import AppContext from '../../store/Context'
@@ -9,6 +10,7 @@ function AppMenu () {
   const [user, setUser] = useState([])
   const [products, setProducts] = useState([])
   const [cart, setCart] = useState([])
+  const [users, setUsers] = useState([])
   const [cartLoading, setCartLoading] = useState(false)
 
   const _getProducts = async payload => {
@@ -40,6 +42,18 @@ function AppMenu () {
     }
   }
 
+  const _getUsers = async payload => {
+    try {
+      const body = payload || ''
+      const token = await AsyncStorage.getItem('token')
+      const res = await getUsers(body, token)
+      setUsers(res?.data)
+    } catch (error) {
+      const errorText = Object.values(error?.response?.data)
+      alert(`Error: ${errorText[0]}`)
+    }
+  }
+
   return (
     <AppContext.Provider
       value={{
@@ -50,7 +64,9 @@ function AppMenu () {
         productLoading,
         cartLoading,
         cart,
-        _getCart
+        _getCart,
+        users,
+        _getUsers
       }}
     >
       <RootStackNav />

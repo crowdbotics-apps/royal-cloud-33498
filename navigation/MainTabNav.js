@@ -9,6 +9,7 @@ import Products from '../screens/Products'
 import Inventory from '../screens/Products/Inventory'
 import InventoryDetails from '../screens/Products/Details'
 import Cart from '../screens/Cart'
+import FeedBack from '../screens/FeedBack'
 
 const Stack = createStackNavigator()
 
@@ -25,7 +26,7 @@ function MainTabNav () {
     >
       <Tab.Screen name='Home' component={HomeStack} />
       <Tab.Screen name='Cart' component={Cart} />
-      <Tab.Screen name='Settings' component={Settings} />
+      <Tab.Screen name='Settings' component={SettingsStack} />
       <Tab.Screen name='Inventory' component={InventoryStack} />
     </Tab.Navigator>
   )
@@ -44,6 +45,20 @@ function HomeStack () {
       <Stack.Screen name='Home' component={Home} />
       <Stack.Screen name='Products' component={Products} />
       <Stack.Screen name='InventoryDetails' component={InventoryDetails} />
+    </Stack.Navigator>
+  )
+}
+
+function SettingsStack () {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+        presentation: 'card'
+      }}
+    >
+      <Stack.Screen name='Settings' component={Settings} />
+      <Stack.Screen name='FeedBack' component={FeedBack} />
     </Stack.Navigator>
   )
 }

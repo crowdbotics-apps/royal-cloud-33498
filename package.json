@@ -33,6 +33,7 @@
     "react-native-date-picker": "^4.2.1",
     "react-native-dotenv": "^2.5.3",
     "react-native-elements": "^3.3.1",
+    "react-native-flatlist-alphabet": "^1.1.2",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-image-crop-picker": "^0.37.3",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",

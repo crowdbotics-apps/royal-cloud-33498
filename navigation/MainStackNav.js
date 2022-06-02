@@ -10,6 +10,8 @@ import SetPasswrod from '../screens/ForgotPassword/SetPasswrod'
 import Profile from '../screens/Profile'
 import PrivacyPolicy from '../screens/PrivacyPolicy'
 import TermsCondition from '../screens/TermsCondition'
+import AdminPanel from '../screens/AdminPanel'
+import ListAllUsers from '../screens/ListAllUsers'
 
 const Stack = createStackNavigator()
 function MainStackNav () {
@@ -30,6 +32,8 @@ function MainStackNav () {
       <Stack.Screen name='TermsCondition' component={TermsCondition} />
       <Stack.Screen name='Profile' component={Profile} />
       <Stack.Screen name='MainTabNav' component={MainTabNav} />
+      <Stack.Screen name='AdminPanel' component={AdminPanel} />
+      <Stack.Screen name='ListAllUsers' component={ListAllUsers} />
     </Stack.Navigator>
   )
 }

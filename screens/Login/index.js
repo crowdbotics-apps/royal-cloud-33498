@@ -30,6 +30,7 @@ function LoginScreen ({ navigation }) {
   const { setUser } = context
 
   const [state, setState] = useState({
+    email: '',
     name: '',
     last_name: '',
     phone: '',
@@ -41,7 +42,8 @@ function LoginScreen ({ navigation }) {
     showPassword: false,
     isChecked: false,
     showConfirmPassword: false,
-    active: 0
+    active: 0,
+    isAdmin: false
   })
 
   const {
@@ -55,7 +57,9 @@ function LoginScreen ({ navigation }) {
     showConfirmPassword,
     last_name,
     name,
-    isChecked
+    isChecked,
+    isAdmin,
+    email
   } = state
 
   const handleChange = (name, value) => {
@@ -65,9 +69,17 @@ function LoginScreen ({ navigation }) {
   const handleLogin = async () => {
     try {
       handleChange('loading', true)
-      const payload = {
-        phone,
-        password
+      let payload
+      if (isAdmin) {
+        payload = {
+          email,
+          password
+        }
+      } else {
+        payload = {
+          phone,
+          password
+        }
       }
       const res = await loginUser(payload)
       handleChange('loading', false)
@@ -133,7 +145,7 @@ function LoginScreen ({ navigation }) {
       >
         <View style={styles.top}>
           <SvgXml xml={logo} width={200} style={{ marginBottom: 20 }} />
-          <View style={styles.tabs}>
+          <View style={[styles.tabs, { justifyContent: 'center' }]}>
             <TouchableOpacity
               style={styles.tab}
               onPress={() => handleChange('active', 0)}
@@ -141,23 +153,25 @@ function LoginScreen ({ navigation }) {
               <Text
                 style={active === 0 ? styles.activeTabText : styles.tabText}
               >
-                Sign In
+                {isAdmin ? 'Admin Sign In' : 'Sign In'}
               </Text>
               <View style={active === 0 ? styles.activeline : styles.line} />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.tab}
-              onPress={() => handleChange('active', 1)}
-            >
-              <Text
-                style={active === 1 ? styles.activeTabText : styles.tabText}
+            {!isAdmin && (
+              <TouchableOpacity
+                style={styles.tab}
+                onPress={() => handleChange('active', 1)}
               >
-                Sign Up
-              </Text>
-              <View style={active === 1 ? styles.activeline : styles.line} />
-            </TouchableOpacity>
+                <Text
+                  style={active === 1 ? styles.activeTabText : styles.tabText}
+                >
+                  Sign Up
+                </Text>
+                <View style={active === 1 ? styles.activeline : styles.line} />
+              </TouchableOpacity>
+            )}
           </View>
-          {active === 0 && (
+          {active === 0 && !isAdmin && (
             <Text style={styles.loginText}>Sign in with your phone number</Text>
           )}
           {active === 0 ? (
@@ -165,11 +179,11 @@ function LoginScreen ({ navigation }) {
               <View style={styles.textInputContainer}>
                 <AppInput
                   label={'Your phone number'}
-                  placeholder={'Your phone number'}
-                  name={'phone'}
-                  keyboardType={'phone-pad'}
+                  placeholder={isAdmin ? 'Your email' : 'Your phone number'}
+                  name={isAdmin ? 'email' : 'phone'}
+                  keyboardType={isAdmin ? 'email-address' : 'phone-pad'}
                   prefixBGTransparent
-                  value={phone}
+                  value={isAdmin ? email : phone}
                   onChange={handleChange}
                 />
                 {/* <PhoneInput
@@ -224,10 +238,19 @@ function LoginScreen ({ navigation }) {
                 <AppButton
                   title={'SIGN IN'}
                   loading={loading}
-                  disabled={!phone || !password}
+                  disabled={(isAdmin ? !email : !phone) || !password}
                   onPress={handleLogin}
                 />
               </View>
+              {isAdmin && (
+                <View style={styles.buttonWidth}>
+                  <AppButton
+                    title={'Cancel'}
+                    outlined
+                    onPress={() => handleChange('isAdmin', false)}
+                  />
+                </View>
+              )}
             </>
           ) : (
             <>
@@ -379,14 +402,21 @@ function LoginScreen ({ navigation }) {
           )}
         </View>
       </KeyboardAwareScrollView>
-      {active === 0 && (
-        <View style={styles.remeberContainer}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ForgotPassword')}
-          >
-            <Text style={styles.forgotText}>Forgot Password?</Text>
-          </TouchableOpacity>
-        </View>
+      {active === 0 && !isAdmin && (
+        <>
+          <View style={[styles.remeberContainer, { marginBottom: 10 }]}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ForgotPassword')}
+            >
+              <Text style={styles.forgotText}>Forgot Password?</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.remeberContainer}>
+            <TouchableOpacity onPress={() => handleChange('isAdmin', true)}>
+              <Text style={styles.forgotText}>Login as Admin?</Text>
+            </TouchableOpacity>
+          </View>
+        </>
       )}
     </View>
   )

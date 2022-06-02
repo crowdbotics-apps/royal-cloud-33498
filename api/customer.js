@@ -19,3 +19,7 @@ export const getCart = token => {
 export const submitToCart = token => {
   return API.get(`api/v1/cart/submit/`, token)
 }
+
+export const sendFeedback = (payload, token) => {
+  return API.post(`api/v1/feedback/`, payload, token)
+}

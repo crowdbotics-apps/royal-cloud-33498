@@ -33,7 +33,11 @@ export default function AppButton ({
           marginTop: marginTop || hp('2%'),
           justifyContent: postfix ? 'space-between' : 'center',
           borderColor: borderColor || COLORS.primary,
-          backgroundColor: backgroundColor ? backgroundColor : COLORS.primary,
+          backgroundColor: outlined
+            ? 'transparent'
+            : backgroundColor
+            ? backgroundColor
+            : COLORS.primary,
           opacity: disabled ? 0.5 : 1,
           height: height ? height : hp('7%')
         }

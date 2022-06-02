@@ -7,7 +7,7 @@ import AppContext from '../../store/Context'
 function AuthLoading ({ navigation }) {
   // Context
   const context = useContext(AppContext)
-  const { setUser, _getCart, _getProducts } = context
+  const { setUser, _getCart, _getProducts, _getUsers } = context
 
   useEffect(() => {
     _bootstrapAsync()
@@ -23,6 +23,11 @@ function AuthLoading ({ navigation }) {
       setUser(userData)
       _getProducts()
       _getCart()
+      _getUsers()
+      if (userData?.is_admin) {
+        navigation.navigate('AdminPanel')
+        return
+      }
       if (!userData?.profile?.photo) {
         navigation.navigate('Profile')
       } else {
