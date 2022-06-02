@@ -19,12 +19,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
     Custom serializer for creating a User
     """
     profile = ProfileSerializer(required=False)
-
+    is_admin = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ('id', 'name', 'last_name', 'phone', 'email',
-                  'password', 'profile', 'flagged')
+                  'password', 'profile', 'flagged', 'is_admin')
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5},
                         'phone': {'required': True},
                         'name': {'required': True},
@@ -60,6 +60,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
         if email:
             set_email(email=email, user=user)
         return user
+
+    def get_is_admin(self, obj):
+        return obj.is_superuser
 
 
 class OTPSerializer(serializers.Serializer):
