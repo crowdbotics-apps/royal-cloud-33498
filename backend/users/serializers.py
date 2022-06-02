@@ -117,19 +117,28 @@ class CustomAuthTokenSerializer(serializers.Serializer):
     """
     Serializer for returning an authenticated User and Token
     """
-    phone = serializers.CharField(required=True)
+    phone = serializers.CharField(required=False)
+    email = serializers.CharField(required=False)
     password = serializers.CharField(style={'input_type': 'password'}, trim_whitespace=False, required=True)
 
     def validate(self, attrs):
-        phone = attrs.get('phone')
+        phone = attrs.get('phone', None)
+        email = attrs.get('email', None)
         password = attrs.get('password')
-        user = authenticate(
+        user = None
+        if email:
+            user = authenticate(
             request=self.context.get('request'),
-            phone=phone,
+            email=email,
             password=password
-        )
+            )
+        else:
+            user = authenticate(
+                request=self.context.get('request'),
+                phone=phone,
+                password=password
+            )
         if not user:
             raise serializers.ValidationError({'detail': 'Unable to authenticate with provided credentials'})
         attrs['user'] = user
         return attrs
-
