@@ -36,7 +36,7 @@ def send_otp_sms(phone, otp):
         except TwilioRestException as e:
             raise ValidationError('Please enter a valid North American phone number excluding country code {}').format(e)
     else:
-        email = EmailMessage('OTP Verification', 'Your OTP is {}'.format(otp), from_email='sallar.rezaie@crowdbotics.com', to=('testemail@gmail.com',))
+        email = EmailMessage('OTP Verification', 'Your OTP is {}'.format(otp), from_email='support@tandemhomeworks.com', to=('testemail@gmail.com',))
         email.send()
 
 
@@ -85,7 +85,7 @@ def send_feedback(title, body, email):
             </body>
             </html>
             """ % (title, body)
-    email_msg = EmailMessage("Feedback Response From Jonathan Chu", email_body, from_email='sallar.rezaie@crowdbotics.com', to=[email])
+    email_msg = EmailMessage("Feedback Response From Jonathan Chu", email_body, from_email='support@tandemhomeworks.com', to=[email])
     email_msg.content_subtype = "html"
     email_msg.send()
 
