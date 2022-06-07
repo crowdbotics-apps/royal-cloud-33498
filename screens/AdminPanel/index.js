@@ -1,18 +1,32 @@
-import React from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import React, { useContext } from 'react'
 import { View, StyleSheet, Text, ScrollView } from 'react-native'
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { AppButton, Header } from '../../components'
 import { COLORS, FONT1SEMIBOLD } from '../../constants'
+import AppContext from '../../store/Context'
 
 function AdminPanel ({ navigation }) {
+    // Context
+    const context = useContext(AppContext)
+    const setUser = context?.setUser
   const list = [
     { title: 'LIST OF ALL USERS', route: 'ListAllUsers' },
     { title: 'PUSH NOTIFICATIONS', route: 'Notifications' },
     { title: 'FEEDBACK', route: '' },
     { title: 'UPLOAD CONTENT', route: '' },
     { title: 'INVOICES', route: '' },
-    { title: 'PENDING & COMPLETE ORDERS', route: '' }
+    { title: 'PENDING & COMPLETE ORDERS', route: '' },
+    { title: 'Logout', route: '' }
   ]
+
+  const logout = async () => {
+    setUser(null)
+    await AsyncStorage.removeItem('token')
+    await AsyncStorage.removeItem('user')
+    navigation.navigate('AuthLoading')
+  }
+
   return (
     <ScrollView
       style={styles.container}
@@ -30,7 +44,11 @@ function AdminPanel ({ navigation }) {
               key={index}
               marginTop={hp(5)}
               outlined
-              onPress={() => navigation.navigate(item.route)}
+              onPress={() =>
+                item.title === 'Logout'
+                  ? logout()
+                  : navigation.navigate(item.route)
+              }
               title={item.title}
               backgroundColor={COLORS.white}
             />
@@ -53,7 +71,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   buttonWidth: {
-    width: '80%'
+    width: '80%',
+    marginBottom: 30
   },
   activeTabText: {
     marginBottom: 10,

@@ -121,8 +121,8 @@ function Profile ({ navigation }) {
     } catch (error) {
       handleChange('loading', false)
       console.warn('err', error)
-      const showWError = Object.values(error.response?.data)
-      Toast.show(`Error: ${showWError[0]}`)
+      const errorText = Object.values(error.response?.data)
+      Toast.show(`Error: ${JSON.stringify(errorText[0])}`)
     }
   }
 
@@ -225,11 +225,7 @@ function Profile ({ navigation }) {
             title={'CONFIRM'}
             loading={loading}
             disabled={
-              !name ||
-              !city ||
-              !zip_code ||
-              !selectState ||
-              !country
+              !name || !city || !photo || !zip_code || !selectState || !country
             }
             onPress={handleProfile}
           />

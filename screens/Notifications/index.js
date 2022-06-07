@@ -11,6 +11,7 @@ import { AppButton, Header } from '../../components'
 import { COLORS, FONT1REGULAR, FONT1SEMIBOLD } from '../../constants'
 import AppContext from '../../store/Context'
 import moment from 'moment'
+import momenttimezone from 'moment-timezone'
 
 function Notifications ({ navigation }) {
   // Context
@@ -34,7 +35,32 @@ function Notifications ({ navigation }) {
 
   const { loading } = state
 
-  console.warn('notifications', notifications)
+  function convertLocalDateToUTCDate (time, toLocal) {
+    const todayDate = moment(new Date()).format('YYYY-MM-DD')
+    if (toLocal) {
+      const today = momenttimezone.tz.guess()
+      const timeUTC = momenttimezone.tz(time, today).format()
+      let date = new Date(timeUTC)
+      const milliseconds = Date.UTC(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        date.getHours(),
+        date.getMinutes(),
+        date.getSeconds()
+      )
+      const localTime = new Date(milliseconds)
+      const todayDate1 = momenttimezone.tz(localTime, today).fromNow()
+      return todayDate1
+    } else {
+      const today = momenttimezone.tz.guess()
+      const todayDate1 = momenttimezone
+        .tz(`${todayDate} ${time}`, today)
+        .format()
+      const utcTime = moment.utc(todayDate1).format('YYYY-MM-DDTHH:mm')
+      return utcTime
+    }
+  }
 
   if (loading) {
     return (
@@ -65,7 +91,7 @@ function Notifications ({ navigation }) {
                 <View style={styles.rowBetween}>
                   <Text style={styles.title}>{item?.title}</Text>
                   <Text style={styles.time}>
-                    {moment(item?.created_at).fromNow()}
+                    {convertLocalDateToUTCDate(item?.created_at, true)}
                   </Text>
                 </View>
                 <Text style={styles.content}>{item?.content}</Text>

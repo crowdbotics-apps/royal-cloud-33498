@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     color: COLORS.inputText,
     width: '80%',
     fontFamily: FONT1REGULAR,
-    fontSize: hp(2.3)
+    fontSize: hp(2.2)
   },
   lebel: {
     color: COLORS.darkBlack,
