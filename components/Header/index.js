@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     height: 5
   },
   tab: {
-    width: '50%',
+    width: '60%',
     marginBottom: 20,
     alignItems: 'center'
   }

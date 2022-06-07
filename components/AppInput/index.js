@@ -149,8 +149,8 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '100%',
+    height: '100%',
     paddingHorizontal: 10,
-    borderRadius: 6,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

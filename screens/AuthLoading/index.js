@@ -7,7 +7,13 @@ import AppContext from '../../store/Context'
 function AuthLoading ({ navigation }) {
   // Context
   const context = useContext(AppContext)
-  const { setUser, _getCart, _getProducts, _getUsers } = context
+  const {
+    setUser,
+    _getCart,
+    _getProducts,
+    _getUsers,
+    _getNotifications
+  } = context
 
   useEffect(() => {
     _bootstrapAsync()
@@ -25,6 +31,7 @@ function AuthLoading ({ navigation }) {
       _getCart()
       _getUsers()
       if (userData?.is_admin) {
+        _getNotifications()
         navigation.navigate('AdminPanel')
         return
       }

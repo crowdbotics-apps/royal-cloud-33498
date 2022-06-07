@@ -12,6 +12,8 @@ import PrivacyPolicy from '../screens/PrivacyPolicy'
 import TermsCondition from '../screens/TermsCondition'
 import AdminPanel from '../screens/AdminPanel'
 import ListAllUsers from '../screens/ListAllUsers'
+import Notifications from '../screens/Notifications'
+import CreateNotification from '../screens/Notifications/CreateNotification'
 
 const Stack = createStackNavigator()
 function MainStackNav () {
@@ -34,6 +36,8 @@ function MainStackNav () {
       <Stack.Screen name='MainTabNav' component={MainTabNav} />
       <Stack.Screen name='AdminPanel' component={AdminPanel} />
       <Stack.Screen name='ListAllUsers' component={ListAllUsers} />
+      <Stack.Screen name='Notifications' component={Notifications} />
+      <Stack.Screen name='CreateNotification' component={CreateNotification} />
     </Stack.Navigator>
   )
 }

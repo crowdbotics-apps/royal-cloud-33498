@@ -7,7 +7,7 @@ import { COLORS, FONT1SEMIBOLD } from '../../constants'
 function AdminPanel ({ navigation }) {
   const list = [
     { title: 'LIST OF ALL USERS', route: 'ListAllUsers' },
-    { title: 'PUSH NOTIFICATIONS', route: '' },
+    { title: 'PUSH NOTIFICATIONS', route: 'Notifications' },
     { title: 'FEEDBACK', route: '' },
     { title: 'UPLOAD CONTENT', route: '' },
     { title: 'INVOICES', route: '' },
