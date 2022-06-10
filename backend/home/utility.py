@@ -34,7 +34,7 @@ def send_otp_sms(phone, otp):
                                         to=phone
                                     )
         except TwilioRestException as e:
-            raise ValidationError('Please enter a valid North American phone number excluding country code {}').format(e)
+            raise ValidationError('Please enter a valid North American phone number excluding country code {}'.format(e))
     else:
         email = EmailMessage('OTP Verification', 'Your OTP is {}'.format(otp), from_email='support@tandemhomeworks.com', to=('testemail@gmail.com',))
         email.send()
