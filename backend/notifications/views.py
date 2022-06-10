@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from home.utility import send_notification_to_all
-from notifications.models import Notification
-from notifications.serializers import NotificationSerializer
+from notifications.models import Broadcast, Notification
+from notifications.serializers import BroadcastSerializer, NotificationSerializer
 from users.authentication import ExpiringTokenAuthentication
 
 
@@ -43,4 +43,15 @@ class NotificationViewSet(ModelViewSet):
             title=title,
             content=content
         )
+        Broadcast.objects.create(
+            title=title,
+            content=content
+        )
         return Response({'Notifications broadcasted successfully'}, status=status.HTTP_200_OK)
+
+
+class BroadcastViewSet(ModelViewSet):
+    serializer_class = BroadcastSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = [ExpiringTokenAuthentication]
+    queryset = Broadcast.objects.all()
