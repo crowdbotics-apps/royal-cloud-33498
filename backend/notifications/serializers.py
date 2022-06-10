@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Notification
+from .models import Broadcast, Notification
 
 
 class NotificationSerializer(serializers.ModelSerializer):
@@ -12,4 +12,13 @@ class NotificationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Notification
+        fields = '__all__'
+
+
+class BroadcastSerializer(serializers.ModelSerializer):
+    """
+    A custom serializer for handling broadcasts by the admin
+    """
+    class Meta:
+        model = Broadcast
         fields = '__all__'

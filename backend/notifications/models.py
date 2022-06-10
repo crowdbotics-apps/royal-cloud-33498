@@ -18,3 +18,16 @@ class Notification(UUIDModel):
 
     def __str__(self):
         return self.title
+
+
+class Broadcast(UUIDModel):
+    """
+    A model for representing the individual broadcast sent by the admin
+    """
+    title = models.CharField(blank=True, null=True, max_length=255)
+    content = models.CharField(blank=True, null=True, max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+ 
