@@ -36,6 +36,9 @@ class PackingList(UUIDModel):
     tax = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     after_tax_total = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    tracking_number_id = models.CharField(max_length=255, blank=True, null=True)
+    packing_video = models.FileField(upload_to='packing-list/videos', blank=True, null=True)
+    invoice = models.FileField(upload_to='packing-list/invoices', blank=True, null=True)
 
     def save(self,*args, **kwargs):
         orders = self.orders.aggregate(Sum('total'))
