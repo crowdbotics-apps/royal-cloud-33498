@@ -7,7 +7,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from orders.models import Cart, CartOrder, Order, PackingList
 from orders.serializers import CartSerializer, OrderSerializer, PackingListSerializer
 from products.models import Product
-from royal_cloud_33498.settings import MAX_PENDING_ORDERS
 from users.authentication import ExpiringTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
