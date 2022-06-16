@@ -5,7 +5,7 @@ import requests
 from requests.structures import CaseInsensitiveDict
 
 from notifications.models import Notification
-from royal_cloud_33498.settings import DEBUG, FCM_SERVER_KEY, TWILIO_ACCOUNT_SID, TWILIO_ACCOUNT_TOKEN, TWILIO_MESSAGING_SID
+from royal_cloud_33498.settings import DEBUG, FCM_SERVER_KEY, SENDGRID_SENDER_IDENTITY, TWILIO_ACCOUNT_SID, TWILIO_ACCOUNT_TOKEN, TWILIO_MESSAGING_SID
 from rest_framework.serializers import ValidationError
 from rest_framework.authtoken.models import Token
 import pyotp
@@ -36,7 +36,7 @@ def send_otp_sms(phone, otp):
         except TwilioRestException as e:
             raise ValidationError('Please enter a valid North American phone number excluding country code {}'.format(e))
     else:
-        email = EmailMessage('OTP Verification', 'Your OTP is {}'.format(otp), from_email='sallar.rezaie@crowdbotics.com', to=('testemail@gmail.com',))
+        email = EmailMessage('OTP Verification', 'Your OTP is {}'.format(otp), from_email=SENDGRID_SENDER_IDENTITY, to=('testemail@gmail.com',))
         email.send()
 
 
@@ -85,7 +85,7 @@ def send_feedback(title, body, email):
             </body>
             </html>
             """ % (title, body)
-    email_msg = EmailMessage("Feedback Response From Jonathan Chu", email_body, from_email='sallar.rezaie@crowdbotics.com', to=[email])
+    email_msg = EmailMessage("Feedback Response From Jonathan Chu", email_body, from_email=SENDGRID_SENDER_IDENTITY, to=[email])
     email_msg.content_subtype = "html"
     email_msg.send()
 
