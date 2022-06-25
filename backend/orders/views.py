@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from orders.models import Cart, CartOrder, Order, PackingList
+from orders.models import Cart, CartOrder, Order
 from orders.serializers import CartSerializer, OrderSerializer, PackingListSerializer
 from products.models import Product
 from users.authentication import ExpiringTokenAuthentication
@@ -40,7 +40,11 @@ class CartViewSet(ModelViewSet):
         style = request.data.get('style')
         product = Product.objects.get(id=product_id)
         if style not in product.styles:
-            return Response({'detail': 'Invalid Style Choice'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    'detail': 'Invalid Style Choice'
+                }, status=status.HTTP_400_BAD_REQUEST
+            )
         total_cost = 0
         temp_quantity = quantity
         if product.type == "Catalog":
@@ -101,7 +105,6 @@ class CartViewSet(ModelViewSet):
         if user.flagged:
             return Response({"detail": "You are restricted from placing an order at the moment"},
                              status=status.HTTP_400_BAD_REQUEST)
-        packing_list = PackingList.objects.create(user=user)
         result = []
         total_price = 0
         for order in cart.orders.all():
@@ -115,15 +118,17 @@ class CartViewSet(ModelViewSet):
             if serializer.is_valid():
                 # Delete the cart order
                 order.delete()
-                order = serializer.save(packing_list=packing_list)
+                # Submit the actual Order object
+                new_order = serializer.save(packing_list=packing_list)
                 result.append(serializer.data)
-                total_price += order.total
+                total_price += new_order.total
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         cart.total = 0
         cart.save()
         packing_list.total = total_price
-        packing_list.after_tax_total = packing_list.total + packing_list.tax + packing_list.shipping_cost
+        packing_list.after_tax_total = packing_list.total + packing_list.tax \
+            + packing_list.shipping_cost
         packing_list.save()
         serializer = PackingListSerializer(packing_list)
         return Response(serializer.data)
