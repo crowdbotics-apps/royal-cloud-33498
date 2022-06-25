@@ -18,7 +18,8 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = '__all__'
         extra_kwargs = {'product': {'required': False},
-                        'style': {'required': False}}
+                        'style': {'required': False},
+                        'transaction': {'required': False}}
 
     def create(self, validated_data):
         quantity = validated_data['quantity']
@@ -27,7 +28,6 @@ class OrderSerializer(serializers.ModelSerializer):
         if style not in product.styles:
             raise serializers.ValidationError("Invalid Style")
         order = super().create(validated_data)
-        total_cost = 0
         if product.type == "Catalog":
             # Check if Order includes a Half Pack
             if quantity % 6 == 3:
@@ -43,11 +43,32 @@ class OrderSerializer(serializers.ModelSerializer):
                         title="Half Pack Confirmation",
                         content="Your order {} has been submitted and pending shipment".format(matching_order.sid)
                     )
-                    order.half_pack=True
-                    order.matching_order = matching_order
+
+                    if quantity == 3:
+                        order.half_pack = True
+                        order.matching_order = matching_order
+                        order.subtotal = product.per_pack_price * Decimal(0.5)
+
+                    # If quantity is not 3
+                    else:
+                        Order.objects.create(
+                            user=order.user,
+                            transaction=order.transaction,
+                            product=order.product,
+                            style=order.style,
+                            quantity=3,
+                            half_pack=True,
+                            matching_order=matching_order,
+                            items=product.size_variance,
+                            status="Pending",
+                            subtotal=product.per_pack_price * Decimal(0.5)
+                        )
+                        order.quantity -= 3
+                        num_packs = order.quantity / 6
+                        order.subtotal = product.per_pack_price * Decimal(num_packs)
+
                     order.status = "Pending"
-                    order.items = product.size_variance
-                    order.quantity = 3
+
 
                     product.half_pack_styles.remove(style)
                     if len(product.half_pack_styles) == 0:
@@ -56,36 +77,60 @@ class OrderSerializer(serializers.ModelSerializer):
 
                 # If there is no available half pack match, create an unmatched order
                 else:
-                    order.half_pack = True
+                    if quantity == 3:
+                        order.half_pack = True
+                        order.subtotal = product.per_pack_price * Decimal(0.5)
+                        half_pack_order_id = str(order.id)
+
+                    # If quantity is not 3
+                    else:
+                        half_pack_order = Order.objects.create(
+                            user=order.user,
+                            transaction=order.transaction,
+                            product=order.product,
+                            style=order.style,
+                            quantity=3,
+                            half_pack=True,
+                            items=product.size_variance,
+                            status="Unmatched",
+                            subtotal=product.per_pack_price * Decimal(0.5)
+                        )
+                        half_pack_order_id = str(half_pack_order.id)
+
+                        order.quantity -= 3
+                        num_packs = order.quantity / 6
+                        order.subtotal = product.per_pack_price * Decimal(num_packs)
+
                     order.status = "Unmatched"
-                    order.items = product.size_variance
-                    order.quantity = 3
 
                     if product.half_pack_styles is None:
                         product.half_pack_styles = []
 
                     product.half_pack_styles.append(style)
                     product.half_pack_available = True
-                    product.half_pack_orders[style] = str(order.id)
+                    product.half_pack_orders[style] = half_pack_order_id
                     product.save()
-                total_cost = total_cost + (product.per_pack_price * Decimal(0.5))
+
                 quantity -= 3
 
             if quantity and quantity % 6 == 0:
                 order.status = "Pending"
-                order.items = product.size_variance,
+                order.items = product.size_variance
                 order.quantity = quantity
                 num_packs = quantity / 6
-                total_cost = total_cost + (product.per_pack_price * Decimal(num_packs))
+                order.subtotal = product.per_pack_price * Decimal(num_packs)
 
         elif product.type == "Inventory":
+            if product.stock < int(quantity):
+                raise serializers.ValidationError('Insufficient Stock')
+            product.stock -= quantity
+            product.save()
             order.status = "Pending"
             order.items = product.size_variance
             order.quantity = quantity
             order.subtotal = product.per_item_price * quantity
 
-            total_cost = total_cost + (product.per_item_price * quantity)
-        order.subtotal = total_cost
+
         order.save()
         return order
 

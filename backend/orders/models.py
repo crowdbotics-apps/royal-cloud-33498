@@ -25,6 +25,21 @@ class CartOrder(UUIDModel):
     total = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
 
 
+class Transaction(UUIDModel):
+    """
+    A data representation of a customer's entire Cart on submission
+    """
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='transactions'
+    )
+    date = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
 class Order(UUIDModel):
     """
     A data representation of a customer's Order
@@ -34,6 +49,11 @@ class Order(UUIDModel):
         max_length=6,
         alphabet="1234567890",
         unique=True
+    )
+    transaction = models.ForeignKey(
+        Transaction,
+        on_delete=models.CASCADE,
+        related_name='orders'
     )
     user = models.ForeignKey(
         User,
@@ -89,14 +109,12 @@ class Order(UUIDModel):
     subtotal = models.DecimalField(
         max_digits=7,
         decimal_places=2,
-        null=True,
-        blank=True
+        default=0
     )
     total = models.DecimalField(
         max_digits=7,
         decimal_places=2,
-        null=True,
-        blank=True
+        default=0
     )
     tracking_number_id = models.CharField(
         max_length=255,
@@ -104,12 +122,12 @@ class Order(UUIDModel):
         null=True
     )
     packing_video = models.FileField(
-        upload_to='packing-list/videos',
+        upload_to='orders/videos',
         blank=True,
         null=True
     )
     invoice = models.FileField(
-        upload_to='packing-list/invoices',
+        upload_to='orders/invoices',
         blank=True,
         null=True
     )

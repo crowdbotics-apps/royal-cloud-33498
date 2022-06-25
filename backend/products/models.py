@@ -44,6 +44,7 @@ class Product(UUIDModel):
     half_pack_styles = ArrayField(models.CharField(max_length=32, blank=True), null=True, blank=True)
     size_variance = models.CharField(choices=SIZE_VARIANCE, max_length=32, default='2S 2M 2L')
     type = models.CharField(choices=PRODUCT_TYPE, max_length=32)
+    stock = models.PositiveIntegerField(default=0)
 
 
 class Photo(UUIDModel):

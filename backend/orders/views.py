@@ -1,10 +1,10 @@
 from decimal import Decimal
-from rest_framework import status
+from rest_framework import status, filters
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from orders.models import Cart, CartOrder, Order
+from orders.models import Cart, CartOrder, Order, Transaction
 from orders.serializers import CartSerializer, OrderSerializer
 from products.models import Product
 from users.authentication import ExpiringTokenAuthentication
@@ -16,8 +16,11 @@ class OrderViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated,)
     authentication_classes  = [ExpiringTokenAuthentication]
     queryset = Order.objects.all()
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['user', 'status', 'product']
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['user', 'date', 'product', 'half_pack',\
+        'status', 'tracking_number_id']
+    ordering_fields = ['date', 'status', 'product', 'half_pack', 'status']
+
 
     def perform_create(self, serializer):
         order = serializer.save(
@@ -93,9 +96,9 @@ class CartViewSet(ModelViewSet):
             return Response({'detail': 'Invalid Item ID'}, status=status.HTTP_400_BAD_REQUEST)
         price = item.total
         item.delete()
-        request.user.cart.total -= price
-        request.user.cart.save()
-        serializer = CartSerializer(request.user.cart)
+        cart.total -= price
+        cart.save()
+        serializer = CartSerializer(cart)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'])
@@ -105,25 +108,27 @@ class CartViewSet(ModelViewSet):
         if user.flagged:
             return Response({"detail": "You are restricted from placing an order at the moment"},
                              status=status.HTTP_400_BAD_REQUEST)
-        result = []
-        total_price = 0
-        for order in cart.orders.all():
+
+        transaction = Transaction.objects.create(
+            user=user
+        )
+        for cart_order in cart.orders.all():
             data = {
                 "user": user.id,
-                "quantity": order.quantity,
-                "product": order.product.id,
-                "style": order.style
+                "quantity": cart_order.quantity,
+                "product": cart_order.product.id,
+                "style": cart_order.style
                 }
             serializer = OrderSerializer(data=data)
             if serializer.is_valid():
-                # Delete the cart order
-                order.delete()
-                # Submit the actual Order object
-                new_order = serializer.save()
-                result.append(serializer.data)
-                total_price += new_order.total
+                # Delete the cart order object
+                cart_order.delete()
+                # Save the actual Order object
+                serializer.save(transaction=transaction)
             else:
+                transaction.delete()
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         cart.total = 0
         cart.save()
-        return Response(result)
+        serializer = OrderSerializer(transaction.orders.all().order_by('product'), many=True)
+        return Response(serializer.data)
