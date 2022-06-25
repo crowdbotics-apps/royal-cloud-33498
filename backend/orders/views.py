@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from orders.models import Cart, CartOrder, Order
-from orders.serializers import CartSerializer, OrderSerializer, PackingListSerializer
+from orders.serializers import CartSerializer, OrderSerializer
 from products.models import Product
 from users.authentication import ExpiringTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -119,30 +119,11 @@ class CartViewSet(ModelViewSet):
                 # Delete the cart order
                 order.delete()
                 # Submit the actual Order object
-                new_order = serializer.save(packing_list=packing_list)
+                new_order = serializer.save()
                 result.append(serializer.data)
                 total_price += new_order.total
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         cart.total = 0
         cart.save()
-        packing_list.total = total_price
-        packing_list.after_tax_total = packing_list.total + packing_list.tax \
-            + packing_list.shipping_cost
-        packing_list.save()
-        serializer = PackingListSerializer(packing_list)
-        return Response(serializer.data)
-
-
-class PackingListViewSet(ModelViewSet):
-    serializer_class = PackingListSerializer
-    permission_classes = (IsAuthenticated,)
-    authentication_classes  = [ExpiringTokenAuthentication]
-    queryset = PackingList.objects.all()
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['user', 'date', 'status']
-
-    def get_queryset(self):
-        if not self.request.user.is_superuser:
-            return self.request.user.packing_lists.all()
-        return super().get_queryset()
+        return Response(result)
