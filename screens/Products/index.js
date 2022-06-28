@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  Image,
   ActivityIndicator
 } from 'react-native'
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
@@ -15,17 +14,16 @@ import {
   CustomModal,
   FullCalendar,
   Header,
-  MyCalendar,
   Product
 } from '../../components'
-import { COLORS, FONT1REGULAR, FONT1SEMIBOLD } from '../../constants'
+import { COLORS, FONT1SEMIBOLD } from '../../constants'
 import Square from '../../assets/svg/square.svg'
 import Square4 from '../../assets/svg/4square.svg'
 import BouncyCheckbox from 'react-native-bouncy-checkbox'
 import AppContext from '../../store/Context'
 import { useFocusEffect } from '@react-navigation/native'
 
-function Products ({ navigation, route }) {
+function Products ({ route }) {
   // params
 
   const halfpack = route?.params?.halfpack
@@ -40,7 +38,7 @@ function Products ({ navigation, route }) {
     date: Date.now()
   })
 
-  const { active, filterOpen, halfPack, category, date } = state
+  const { active, filterOpen, halfPack, date } = state
 
   const handleChange = (name, value) => {
     setState(pre => ({ ...pre, [name]: value }))

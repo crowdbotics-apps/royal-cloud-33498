@@ -1,6 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import React, { useState } from 'react'
-import { getNotifications, getUsers } from '../../api/admin'
+import {
+  getAdminProducts,
+  getBrands,
+  getCategories,
+  getFeedbacks,
+  getNotifications,
+  getUsers
+} from '../../api/admin'
 import { getCart, getProducts } from '../../api/customer'
 import RootStackNav from '../../navigation/RootStackNav'
 import AppContext from '../../store/Context'
@@ -11,7 +18,11 @@ function AppMenu () {
   const [products, setProducts] = useState([])
   const [cart, setCart] = useState([])
   const [users, setUsers] = useState([])
+  const [feedbacks, setFeedbacks] = useState([])
   const [notifications, setNotifications] = useState([])
+  const [categories, setCategories] = useState([])
+  const [brands, setBrands] = useState([])
+  const [adminProducts, setAdminProducts] = useState([])
   const [cartLoading, setCartLoading] = useState(false)
 
   const _getProducts = async payload => {
@@ -66,6 +77,51 @@ function AppMenu () {
     }
   }
 
+  const _getFeedbacks = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token')
+      const res = await getFeedbacks(token)
+      setFeedbacks(res?.data)
+    } catch (error) {
+      const errorText = Object.values(error?.response?.data)
+      alert(`Error: ${errorText[0]}`)
+    }
+  }
+
+  const _getCategories = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token')
+      const res = await getCategories(token)
+      setCategories(res?.data)
+    } catch (error) {
+      const errorText = Object.values(error?.response?.data)
+      alert(`Error: ${errorText[0]}`)
+    }
+  }
+
+  const _getBrands = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token')
+      const res = await getBrands(token)
+      setBrands(res?.data)
+    } catch (error) {
+      const errorText = Object.values(error?.response?.data)
+      alert(`Error: ${errorText[0]}`)
+    }
+  }
+
+  const _getAdminProducts = async payload => {
+    try {
+      const token = await AsyncStorage.getItem('token')
+      const body = payload ? payload : ''
+      const res = await getAdminProducts(body, token)
+      setAdminProducts(res?.data)
+    } catch (error) {
+      const errorText = Object.values(error?.response?.data)
+      alert(`Error: ${errorText[0]}`)
+    }
+  }
+
   return (
     <AppContext.Provider
       value={{
@@ -80,7 +136,15 @@ function AppMenu () {
         users,
         _getUsers,
         notifications,
-        _getNotifications
+        _getNotifications,
+        feedbacks,
+        _getFeedbacks,
+        categories,
+        _getCategories,
+        brands,
+        _getBrands,
+        adminProducts,
+        _getAdminProducts
       }}
     >
       <RootStackNav />

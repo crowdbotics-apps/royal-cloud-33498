@@ -12,7 +12,11 @@ function AuthLoading ({ navigation }) {
     _getCart,
     _getProducts,
     _getUsers,
-    _getNotifications
+    _getNotifications,
+    _getFeedbacks,
+    _getCategories,
+    _getBrands,
+    _getAdminProducts
   } = context
 
   useEffect(() => {
@@ -32,6 +36,10 @@ function AuthLoading ({ navigation }) {
       _getUsers()
       if (userData?.is_admin) {
         _getNotifications()
+        _getFeedbacks()
+        _getCategories()
+        _getBrands()
+        _getAdminProducts('')
         navigation.navigate('AdminPanel')
         return
       }

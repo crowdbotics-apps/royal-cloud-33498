@@ -14,6 +14,10 @@ import AdminPanel from '../screens/AdminPanel'
 import ListAllUsers from '../screens/ListAllUsers'
 import Notifications from '../screens/Notifications'
 import CreateNotification from '../screens/Notifications/CreateNotification'
+import AdminFeedback from '../screens/FeedBack/AdminFeedback'
+import UploadContent from '../screens/UploadContent'
+import ListProduct from '../screens/UploadContent/ListProduct'
+import ProductDetails from '../screens/UploadContent/ProductDetails'
 
 const Stack = createStackNavigator()
 function MainStackNav () {
@@ -37,7 +41,11 @@ function MainStackNav () {
       <Stack.Screen name='AdminPanel' component={AdminPanel} />
       <Stack.Screen name='ListAllUsers' component={ListAllUsers} />
       <Stack.Screen name='Notifications' component={Notifications} />
+      <Stack.Screen name='UploadContent' component={UploadContent} />
+      <Stack.Screen name='ProductDetails' component={ProductDetails} />
+      <Stack.Screen name='AdminFeedback' component={AdminFeedback} />
       <Stack.Screen name='CreateNotification' component={CreateNotification} />
+      <Stack.Screen name='ListProduct' component={ListProduct} />
     </Stack.Navigator>
   )
 }

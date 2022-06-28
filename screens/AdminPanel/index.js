@@ -13,8 +13,9 @@ function AdminPanel ({ navigation }) {
   const list = [
     { title: 'LIST OF ALL USERS', route: 'ListAllUsers' },
     { title: 'PUSH NOTIFICATIONS', route: 'Notifications' },
-    { title: 'FEEDBACK', route: '' },
-    { title: 'UPLOAD CONTENT', route: '' },
+    { title: 'FEEDBACK', route: 'AdminFeedback' },
+    { title: 'UPLOAD CONTENT', route: 'UploadContent' },
+    { title: 'MANAGE LISTING', route: 'ListProduct' },
     { title: 'INVOICES', route: '' },
     { title: 'PENDING & COMPLETE ORDERS', route: '' },
     { title: 'Logout', route: '' }
