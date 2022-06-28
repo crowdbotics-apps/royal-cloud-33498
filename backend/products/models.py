@@ -2,6 +2,8 @@ from django.db import models
 from home.constants import PRODUCT_TYPE, SIZE_VARIANCE
 from home.models import UUIDModel
 from django.contrib.postgres.fields import ArrayField, JSONField
+from shortuuid.django_fields import ShortUUIDField
+from shortuuid import uuid
 
 
 class Brand(UUIDModel):
@@ -25,6 +27,12 @@ class Product(UUIDModel):
     """
     A data represention of the products available for sale
     """
+    sid = ShortUUIDField(
+        length=6,
+        max_length=6,
+        alphabet="1234567890",
+        unique=True
+    )
     brand = models.ForeignKey(Brand,
                               on_delete=models.SET_NULL,
                               related_name='products',
