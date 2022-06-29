@@ -87,6 +87,13 @@ class ProductSerializer(serializers.ModelSerializer):
             Photo.objects.create(product=product, **photo)
         return product
 
+    def update(self, instance, validated_data):
+        photos = validated_data.pop('photos', None)
+        product = super().update(instance, validated_data)
+        for photo in photos:
+            Photo.objects.create(product=product, **photo)
+        return product
+
 
 class ProductField(serializers.PrimaryKeyRelatedField):
     def to_representation(self, value):

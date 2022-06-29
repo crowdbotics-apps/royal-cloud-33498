@@ -1,7 +1,9 @@
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from home.filters import ProductFilter
-from products.models import Brand, Category, Product
+from products.models import Brand, Category, Product, Photo
 from products.serializers import BrandSerializer, CategorySerializer, ProductSerializer
 from users.authentication import ExpiringTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -23,7 +25,13 @@ class ProductViewSet(ModelViewSet):
             return super().get_queryset().filter(upload_date__gte=cutoff_date)
         return super().get_queryset()
 
-#Check Cutoff Date Logic
+    @action(detail=False, methods=['post'])
+    def remove_image(self, request):
+        image_id = request.data.get('image_id')
+        photo = Photo.objects.get(id=image_id)
+        serializer = ProductSerializer(photo.product)
+        photo.delete()
+        return Response(serializer.data)
 
 
 class BrandViewSet(ModelViewSet):
