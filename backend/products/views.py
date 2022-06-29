@@ -25,7 +25,7 @@ class ProductViewSet(ModelViewSet):
             return super().get_queryset().filter(upload_date__gte=cutoff_date)
         return super().get_queryset()
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['delete'])
     def remove_image(self, request):
         image_id = request.data.get('image_id')
         photo = Photo.objects.get(id=image_id)

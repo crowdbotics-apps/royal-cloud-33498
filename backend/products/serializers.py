@@ -90,8 +90,9 @@ class ProductSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         photos = validated_data.pop('photos', None)
         product = super().update(instance, validated_data)
-        for photo in photos:
-            Photo.objects.create(product=product, **photo)
+        if photos:
+            for photo in photos:
+                Photo.objects.create(product=product, **photo)
         return product
 
 
