@@ -81,6 +81,7 @@ function LoginScreen ({ navigation }) {
           password
         }
       }
+      console.warn('payload',payload);
       const res = await loginUser(payload)
       handleChange('loading', false)
       setUser(res?.data?.user)

@@ -18,6 +18,7 @@ import AdminFeedback from '../screens/FeedBack/AdminFeedback'
 import UploadContent from '../screens/UploadContent'
 import ListProduct from '../screens/UploadContent/ListProduct'
 import ProductDetails from '../screens/UploadContent/ProductDetails'
+import PendingComfimOrder from '../screens/PendingComfimOrder'
 
 const Stack = createStackNavigator()
 function MainStackNav () {
@@ -46,6 +47,7 @@ function MainStackNav () {
       <Stack.Screen name='AdminFeedback' component={AdminFeedback} />
       <Stack.Screen name='CreateNotification' component={CreateNotification} />
       <Stack.Screen name='ListProduct' component={ListProduct} />
+      <Stack.Screen name='PendingComfimOrder' component={PendingComfimOrder} />
     </Stack.Navigator>
   )
 }

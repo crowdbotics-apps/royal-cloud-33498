@@ -176,7 +176,7 @@ function ProductDetails ({ navigation, route }) {
         colorstyles?.map((color, index) =>
           fornData.append(`styles[${index}]`, color)
         )
-      photos && fornData.append(`image`, photos)
+      photos && fornData.append(`photos[0]image`, photos)
 
       await updateProduct(item?.id, fornData, token)
       _getAdminProducts()
