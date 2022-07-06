@@ -131,6 +131,9 @@ class Order(UUIDModel):
         blank=True,
         null=True
     )
+    description = models.TextField(
+        blank=True
+    )
 
     def save(self, *args, **kwargs):
         self.total = self.subtotal + self.tax + self.shipping_cost
