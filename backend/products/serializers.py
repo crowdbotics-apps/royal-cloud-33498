@@ -71,8 +71,8 @@ class ProductSerializer(serializers.ModelSerializer):
     """
     A data representation of the Products
     """
-    brand = BrandField(queryset=Brand.objects.all())
-    category = CategoryField(queryset=Category.objects.all())
+    brand = BrandField(queryset=Brand.objects.all(), required=False)
+    category = CategoryField(queryset=Category.objects.all(), required=False)
     photos = PhotoSerializer(many=True, required=False)
 
     class Meta:
