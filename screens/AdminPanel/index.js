@@ -16,8 +16,8 @@ function AdminPanel ({ navigation }) {
     { title: 'FEEDBACK', route: 'AdminFeedback' },
     { title: 'UPLOAD CONTENT', route: 'UploadContent' },
     { title: 'MANAGE LISTING', route: 'ListProduct' },
-    { title: 'INVOICES', route: '' },
-    { title: 'PENDING & COMPLETE ORDERS', route: '' },
+    // { title: 'INVOICES', route: '' },
+    { title: 'PENDING & CONFIRMED ORDERS', route: 'PendingComfimOrder' },
     { title: 'Logout', route: '' }
   ]
 
