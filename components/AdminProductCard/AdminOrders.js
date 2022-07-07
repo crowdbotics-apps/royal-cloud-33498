@@ -7,47 +7,45 @@ import ProductImage from '../../assets/images/product.png'
 import DeleteIcon from '../../assets/svg/delete.svg'
 import { COLORS, FONT1BOLD, FONT1LIGHT, FONT1REGULAR } from '../../constants'
 
-export default function AdminProductCard ({ item, handleRemoveItem }) {
-  console.warn('item', item)
+export default function AdminOrders ({ item, handleRemoveItem }) {
   const navigation = useNavigation()
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('ProductDetails', { item })}
+      onPress={() => navigation.navigate('OrderDetails', { item })}
       style={[styles.container]}
     >
       <Image
         source={
-          item?.photos?.length > 0
-            ? { uri: item?.photos[0]?.image }
+          item?.product?.photos?.length > 0
+            ? { uri: item?.product?.photos[0]?.image }
             : ProductImage
         }
         style={[styles.image, { height: 200 }]}
       />
       <View style={styles.rowBetween}>
         <Text style={styles.price}>Product: {item?.sid}</Text>
-        <Text style={styles.total}>Price: ${item?.per_item_price}</Text>
-        <Text style={styles.price}>Size: {item?.size_variance}</Text>
+        <Text style={styles.price}>Size: {item?.items}</Text>
         <View style={styles.styleDiv}>
           <Text style={styles.price}>Color</Text>
-          {item?.styles?.map((style, index) => (
+          {/* {item?.styles?.map((style, index) => ( */}
             <View
-              key={index}
               style={{
                 width: 20,
                 height: 20,
                 marginLeft: 10,
-                backgroundColor: style?.toLowerCase(),
+                backgroundColor: item?.style?.toLowerCase(),
                 borderWidth: 1,
                 borderColor: COLORS.black,
                 borderRadius: 20
               }}
             />
-          ))}
+          {/* ))} */}
         </View>
-        <Text style={styles.quantity}>Category: {item?.category?.name}</Text>
-        <Text style={styles.quantity}>Quantity: {item?.stock}</Text>
-        <Text style={styles.styleText}>Description:</Text>
-        <Text style={styles.quantity}>{item?.description}</Text>
+        <Text style={styles.total}>Price: ${item?.product?.per_item_price}</Text>
+        <Text style={styles.quantity}>Customers: {1}</Text>
+        <Text style={styles.quantity}>Total Packs: {1}</Text>
+        <Text style={styles.quantity}>Total order Qty: {item?.quantity}</Text>
+        <Text style={styles.quantity}>Total Amount: {item?.total} $</Text>
       </View>
     </TouchableOpacity>
   )

@@ -16,7 +16,8 @@ function AuthLoading ({ navigation }) {
     _getFeedbacks,
     _getCategories,
     _getBrands,
-    _getAdminProducts
+    _getAdminProducts,
+    _getAdminOrders
   } = context
 
   useEffect(() => {
@@ -40,6 +41,9 @@ function AuthLoading ({ navigation }) {
         _getCategories()
         _getBrands()
         _getAdminProducts('')
+        _getAdminOrders('?half_pack=false')
+        _getAdminOrders('?half_pack=true', true)
+        _getAdminOrders('?status=Completed', false, true)
         navigation.navigate('AdminPanel')
         return
       }

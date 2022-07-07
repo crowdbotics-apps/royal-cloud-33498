@@ -129,7 +129,7 @@ function Products ({ route }) {
         onClose={() => handleChange('filterOpen', false)}
       >
         <View style={styles.modalView}>
-          <View style={styles.rowAround}>
+          {/* <View style={styles.rowAround}>
             <BouncyCheckbox
               size={25}
               fillColor={COLORS.primary}
@@ -145,7 +145,7 @@ function Products ({ route }) {
               style={{ marginVertical: 20 }}
               onPress={() => handleChange('halfPack', !halfPack)}
             />
-          </View>
+          </View> */}
           <FullCalendar handleChange={handleChange} date={date} />
           <View style={styles.buttonWidth}>
             <AppButton title={'APPLY'} onPress={handleFilter} />
