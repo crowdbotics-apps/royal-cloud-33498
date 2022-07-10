@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import React, { useState } from 'react'
 import {
+  getAdminOrders,
   getAdminProducts,
   getBrands,
   getCategories,
@@ -23,6 +24,9 @@ function AppMenu () {
   const [categories, setCategories] = useState([])
   const [brands, setBrands] = useState([])
   const [adminProducts, setAdminProducts] = useState([])
+  const [adminOrders, setAdminOrders] = useState([])
+  const [adminOrdersHalf, setAdminOrdersHalf] = useState([])
+  const [adminOrdersConfirm, setAdminOrdersConfirm] = useState([])
   const [cartLoading, setCartLoading] = useState(false)
 
   const _getProducts = async payload => {
@@ -122,6 +126,24 @@ function AppMenu () {
     }
   }
 
+  const _getAdminOrders = async (payload, half_pack, confirm) => {
+    try {
+      const token = await AsyncStorage.getItem('token')
+      const body = payload ? payload : ''
+      const res = await getAdminOrders(body, token)
+      if (half_pack) {
+        setAdminOrdersHalf(res?.data)
+      } else if (confirm) {
+        setAdminOrdersConfirm(res?.data)
+      } else {
+        setAdminOrders(res?.data)
+      }
+    } catch (error) {
+      const errorText = Object.values(error?.response?.data)
+      alert(`Error: ${errorText[0]}`)
+    }
+  }
+
   return (
     <AppContext.Provider
       value={{
@@ -144,7 +166,11 @@ function AppMenu () {
         brands,
         _getBrands,
         adminProducts,
-        _getAdminProducts
+        _getAdminProducts,
+        adminOrders,
+        adminOrdersHalf,
+        adminOrdersConfirm,
+        _getAdminOrders
       }}
     >
       <RootStackNav />

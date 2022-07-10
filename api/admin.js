@@ -51,3 +51,11 @@ export const updateProduct = (id, payload, token) => {
 export const deleteProduct = (id, token) => {
   return API.delete(`api/v1/products/${id}/`, {}, token)
 }
+
+export const getAdminOrders = (payload, token) => {
+  return API.get(`api/v1/orders/${payload}`, token)
+}
+
+export const getOrderDetails = (id, token) => {
+  return API.get(`api/v1/orders/${id}/`, token)
+}

@@ -220,6 +220,8 @@ function ProductDetails ({ navigation, route }) {
     }
   }
 
+  console.warn('item',item);
+
   if (loading) {
     return (
       <View style={styles.loading}>
@@ -265,12 +267,13 @@ function ProductDetails ({ navigation, route }) {
           </TouchableOpacity>
           <Text
             style={{
-              marginTop: 5,
-              fontFamily: FONT1REGULAR,
+              marginTop: 10,
+              fontFamily: FONT1SEMIBOLD,
+              color:COLORS.darkGrey,
               fontSize: hp(2.2)
             }}
           >
-            {/* {photos[index]?.name} */}
+           Name: {item?.sid}
           </Text>
           <AppInput
             placeholder={'Description'}
@@ -280,21 +283,21 @@ function ProductDetails ({ navigation, route }) {
           />
 
           {/* <View style={{ width: '48%' }}> */}
-          <AppInput
+          {/* <AppInput
             placeholder={'Price Per Item'}
             keyboardType={'number-pad'}
             value={per_item_price}
             name={`per_item_price`}
             onChange={handleChange}
-          />
+          /> */}
           {/* </View> */}
           <View style={styles.rowBetween}>
             <View style={{ width: '48%' }}>
               <AppInput
                 placeholder={'Price Per Pack'}
                 keyboardType={'number-pad'}
-                value={per_pack_price}
-                name={`per_pack_price`}
+                value={per_item_price}
+                name={`per_item_price`}
                 onChange={handleChange}
               />
             </View>
@@ -424,7 +427,7 @@ function ProductDetails ({ navigation, route }) {
               </View>
             )}
           </View>
-          {!active && (
+          {type !== 'Catalog' && (
             <View style={styles.rowBetween}>
               <View style={[styles.billingType, { width: '48%' }]}>
                 <Menu
@@ -495,7 +498,7 @@ function ProductDetails ({ navigation, route }) {
               fillColor={COLORS.primary}
               unfillColor={COLORS.white}
               disabled={
-                (!active && (!stock || !brand || !category)) ||
+                (type !== 'Catalog' && (!stock || !brand || !category)) ||
                 !size_variance ||
                 !colorstyles ||
                 !per_pack_price
@@ -516,7 +519,7 @@ function ProductDetails ({ navigation, route }) {
               fillColor={COLORS.primary}
               unfillColor={COLORS.white}
               disabled={
-                (!active && (!stock || !brand || !category)) ||
+                (type !== 'Catalog' && (!stock || !brand || !category)) ||
                 !size_variance ||
                 !colorstyles ||
                 !per_pack_price

@@ -93,7 +93,7 @@ function InventoryDetails ({ navigation, route }) {
         style={[styles.image, { height: active ? 200 : 400 }]}
       />
       <View style={styles.rowBetween}>
-        <Text style={styles.styleText}>Style</Text>
+        <Text style={styles.styleText}>{product?.sid}</Text>
         <View style={styles.row}>
           {product?.styles?.map((color, index) => (
             <TouchableOpacity

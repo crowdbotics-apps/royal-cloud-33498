@@ -121,11 +121,12 @@ function UploadContent ({ navigation }) {
       const token = await AsyncStorage.getItem('token')
       handleChange('loading', true)
       const fornData = new FormData()
-      fornData.append('stock', state[`stock${index}`])
-      fornData.append('per_pack_price', Number(state[`per_pack_price${index}`]))
+      fornData.append('per_pack_price', 0)
       fornData.append('per_item_price', Number(state[`per_item_price${index}`]))
+      fornData.append('size_variance', state[`size${index}`])
+      fornData.append('size_variance', state[`size${index}`])
       if (!active) {
-        fornData.append('size_variance', state[`size${index}`])
+        fornData.append('stock', state[`stock${index}`])
         fornData.append('brand', state[`brand${index}`])
         fornData.append('category', state[`category${index}`])
       }
@@ -223,7 +224,7 @@ function UploadContent ({ navigation }) {
             style={{
               width: '100%',
               marginTop: 20,
-              marginBottom:20,
+              marginBottom: 20,
               borderBottomWidth: 5,
               borderBottomColor: COLORS.primary
             }}
@@ -232,7 +233,7 @@ function UploadContent ({ navigation }) {
               source={{ uri: item }}
               style={{ width: 100, height: 100, resizeMode: 'cover' }}
             />
-            <Text
+            {/* <Text
               style={{
                 marginTop: 5,
                 fontFamily: FONT1REGULAR,
@@ -240,7 +241,7 @@ function UploadContent ({ navigation }) {
               }}
             >
               {photos[index]?.name}
-            </Text>
+            </Text> */}
             <AppInput
               placeholder={'Description'}
               value={state[`description${index}`]}
@@ -249,21 +250,21 @@ function UploadContent ({ navigation }) {
             />
 
             {/* <View style={{ width: '48%' }}> */}
-            <AppInput
+            {/* <AppInput
               placeholder={'Price Per Item'}
               keyboardType={'number-pad'}
               value={state[`per_item_price${index}`]}
               name={`per_item_price${index}`}
               onChange={handleChange}
-            />
+            /> */}
             {/* </View> */}
             <View style={styles.rowBetween}>
               <View style={{ width: '48%' }}>
                 <AppInput
-                  placeholder={'Price Per Pack'}
+                  placeholder={'Price'}
                   keyboardType={'number-pad'}
-                  value={state[`per_pack_price${index}`]}
-                  name={`per_pack_price${index}`}
+                  value={state[`per_item_price${index}`]}
+                  name={`per_item_price${index}`}
                   onChange={handleChange}
                 />
               </View>
@@ -464,7 +465,7 @@ function UploadContent ({ navigation }) {
                       !state[`category${index}`])) ||
                   !state[`size${index}`] ||
                   !state[`colors${index}`] ||
-                  !state[`per_pack_price${index}`]
+                  !state[`per_item_price${index}`]
                 }
                 isChecked={false}
                 text='Save'

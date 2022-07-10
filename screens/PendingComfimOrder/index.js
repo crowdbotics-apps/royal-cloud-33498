@@ -10,7 +10,7 @@ import {
   Platform
 } from 'react-native'
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen'
-import { AdminProductCard, Header } from '../../components'
+import { AdminOrders, AdminProductCard, Header } from '../../components'
 import {
   COLORS,
   FONT1LIGHT,
@@ -27,7 +27,13 @@ import { deleteProduct } from '../../api/admin'
 export default function PendingComfimOrder ({}) {
   // Context
   const context = useContext(AppContext)
-  const { adminProductsLoading, adminProducts, _getAdminProducts } = context
+  const {
+    adminProductsLoading,
+    adminOrders,
+    adminOrdersHalf,
+    adminOrdersConfirm,
+    _getAdminProducts
+  } = context
   const [state, setState] = useState({
     loading: false,
     active: 0
@@ -38,8 +44,8 @@ export default function PendingComfimOrder ({}) {
   }
 
   const filteredByType = () => {
-    const listFilter = adminProducts?.filter(e =>
-      !active ? e.type === 'Inventory' : e.type !== 'Inventory'
+    const listFilter = adminOrders?.filter(e =>
+      !active ? e.half_pack : !e.half_pack
     )
     return listFilter
   }
@@ -59,7 +65,7 @@ export default function PendingComfimOrder ({}) {
     }
   }
 
-  console.warn('adminProducts',adminProducts);
+  console.warn('adminOrders', adminOrders)
 
   const { loading, active } = state
   if (loading) {
@@ -118,35 +124,48 @@ export default function PendingComfimOrder ({}) {
         {adminProductsLoading && (
           <ActivityIndicator size={'small'} color={COLORS.primary} />
         )}
-        <SwipeListView
-          data={filteredByType()}
+        <FlatList
+          data={
+            active === 2
+              ? adminOrdersConfirm
+              : active === 1
+              ? adminOrders
+              : adminOrdersHalf
+          }
           key={'_'}
           showsVerticalScrollIndicator={false}
           style={styles.flatList}
-          keyExtractor={item => '_' + item}
-          leftOpenValue={75}
-          renderHiddenItem={(data, rowMap) => (
-            <View
-              style={{
-                width: '100%',
-                alignItems: 'flex-start',
-                justifyContent: 'center',
-                height: '90%',
-                paddingLeft: 10
-              }}
-            >
-              <TouchableOpacity onPress={() => _deleteProduct(data?.item?.id)}>
-                <Icon
-                  name={'delete'}
-                  type={'antdesign'}
-                  color={COLORS.alertButon}
-                />
-              </TouchableOpacity>
-            </View>
-          )}
+          ListEmptyComponent={() => {
+            return (
+              <Text style={{ fontFamily: FONT1REGULAR, color: COLORS.primary }}>
+                No List
+              </Text>
+            )
+          }}
+          keyExtractor={item => '_' + item?.id}
+          // leftOpenValue={75}
+          // renderHiddenItem={(data, rowMap) => (
+          //   <View
+          //     style={{
+          //       width: '100%',
+          //       alignItems: 'flex-start',
+          //       justifyContent: 'center',
+          //       height: '90%',
+          //       paddingLeft: 10
+          //     }}
+          //   >
+          //     <TouchableOpacity onPress={() => _deleteProduct(data?.item?.id)}>
+          //       <Icon
+          //         name={'delete'}
+          //         type={'antdesign'}
+          //         color={COLORS.alertButon}
+          //       />
+          //     </TouchableOpacity>
+          //   </View>
+          // )}
           renderItem={({ item, index }) => {
             return (
-              <AdminProductCard
+              <AdminOrders
                 key={index}
                 item={item}
                 // handleRemoveItem={handleRemoveItem}
