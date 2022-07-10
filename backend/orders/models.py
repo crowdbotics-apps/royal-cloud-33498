@@ -80,6 +80,9 @@ class Order(UUIDModel):
     quantity = models.PositiveIntegerField(
         default=0
     )
+    num_packs = models.PositiveIntegerField(
+        default=0
+    )
     half_pack = models.BooleanField(
         default=False
     )

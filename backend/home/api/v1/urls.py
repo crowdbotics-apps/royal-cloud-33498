@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from customadmin.views import AdminProductOrdersViewSet
 from feedback.views import FeedbackViewSet
 
 from home.api.v1.viewsets import (
@@ -23,6 +24,7 @@ router.register("categories", CategoryViewSet, basename="categories")
 router.register("feedback", FeedbackViewSet, basename="feedback")
 router.register("notifications", NotificationViewSet, basename="notifications")
 router.register("broadcasts", BroadcastViewSet, basename="broadcasts")
+router.register("admin/orders", AdminProductOrdersViewSet, basename="admin_orders")
 
 urlpatterns = [
     path("", include(router.urls)),

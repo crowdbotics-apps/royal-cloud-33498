@@ -6,6 +6,7 @@ PRODUCT_TYPE = (
 STATUS_TYPE = (
     ('Unmatched', 'Unmatched'),
     ('Pending', 'Pending'),
+    ('Confirmed', 'Confirmed'),
     ('Completed', 'Completed')
 )
 

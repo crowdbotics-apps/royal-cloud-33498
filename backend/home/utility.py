@@ -39,6 +39,45 @@ def send_otp_sms(phone, otp):
         email = EmailMessage('OTP Verification', 'Your OTP is {}'.format(otp), from_email=SENDGRID_SENDER_IDENTITY, to=('testemail@gmail.com',))
         email.send()
 
+def send_invoice(user, invoice):
+    if user.registration_id:
+        payload = {
+                'to': user.registration_id,
+                'notification': {
+                    "title": "You have received an invoice",
+                    "text": f"Invoice URL: {invoice}"
+                }
+            }
+        resp = requests.post(url, headers=headers, json=payload)
+    Notification.objects.create(
+            user=user,
+            title="You have received an invoice",
+            content=f"Invoice URL: {invoice}"
+    )
+    if user.phone:
+        client = Client(TWILIO_ACCOUNT_SID, TWILIO_ACCOUNT_TOKEN) 
+        message = client.messages.create(  
+                                    messaging_service_sid=TWILIO_MESSAGING_SID, 
+                                    body=f'Here is your confirmed invoice from Candy. {invoice}',      
+                                    to=user.phone
+                                )
+    if user.email:
+        email_body = """\
+                <html>
+                <head>You've received a confirmed invoice from Candy.</head><br>
+                <body>
+                    <p>
+                    Click on the following link to view or download your latest invoice. <br>
+                    <br>
+                    <a href="%s">%s</a>
+                    </p>
+                </body>
+                </html>
+                """ % (invoice, invoice)
+        email_msg = EmailMessage("Invoice From Jonathan Chu", email_body, from_email=SENDGRID_SENDER_IDENTITY, to=[user.email])
+        email_msg.content_subtype = "html"
+        email_msg.send()     
+
 
 def generateOTP(phone=None, user=None):
     if phone and user:

@@ -43,8 +43,8 @@ class Product(UUIDModel):
                                  related_name='products',
                                  blank=True,
                                  null=True)
-    per_pack_price = models.DecimalField(max_digits=7, decimal_places=2)
-    per_item_price = models.DecimalField(max_digits=7, decimal_places=2)
+    per_pack_price = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    per_item_price = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     styles = ArrayField(models.CharField(max_length=32, blank=True), null=True, blank=True)
     upload_date = models.DateField(auto_now_add=True)
     half_pack_available = models.BooleanField(default=False)
@@ -53,6 +53,9 @@ class Product(UUIDModel):
     size_variance = models.CharField(choices=SIZE_VARIANCE, max_length=32, default='2S 2M 2L')
     type = models.CharField(choices=PRODUCT_TYPE, max_length=32)
     stock = models.PositiveIntegerField(default=0)
+    description = models.TextField(
+        blank=True
+    )
 
 
 class Photo(UUIDModel):

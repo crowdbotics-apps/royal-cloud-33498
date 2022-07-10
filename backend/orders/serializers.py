@@ -3,6 +3,7 @@ from rest_framework import serializers
 from products.models import Product
 from products.serializers import ProductField
 from .models import Order, CartOrder, Cart
+from users.serializers import UserProfileSerializer
 from decimal import Decimal
 from home.utility import send_notification
 
@@ -133,6 +134,12 @@ class OrderSerializer(serializers.ModelSerializer):
 
         order.save()
         return order
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        if instance.user:
+            rep['user'] = UserProfileSerializer(instance.user).data
+        return rep
 
 
 class CartOrderSerializer(serializers.ModelSerializer):
