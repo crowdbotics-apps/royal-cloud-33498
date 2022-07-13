@@ -24,6 +24,7 @@ import { Icon } from 'react-native-elements'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Toast from 'react-native-simple-toast'
 import { deleteProduct, getOrderDetails } from '../../api/admin'
+import ProductImage from '../../assets/images/product.png'
 
 export default function OrderDetails ({ route }) {
   const item = route?.params?.item
