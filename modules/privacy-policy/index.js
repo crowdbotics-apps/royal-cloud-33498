@@ -9,7 +9,7 @@ import {
   getNotifications,
   getUsers
 } from '../../api/admin'
-import { getCart, getProducts } from '../../api/customer'
+import { getCart, getMyOrders, getProducts } from '../../api/customer'
 import RootStackNav from '../../navigation/RootStackNav'
 import AppContext from '../../store/Context'
 
@@ -27,6 +27,10 @@ function AppMenu () {
   const [adminOrders, setAdminOrders] = useState([])
   const [adminOrdersHalf, setAdminOrdersHalf] = useState([])
   const [adminOrdersConfirm, setAdminOrdersConfirm] = useState([])
+  const [adminOrdersActive, setAdminOrdersActive] = useState([])
+  const [adminOrdersHistory, setAdminOrdersHistory] = useState([])
+  const [myOrdersCompleted, setMyOrdersCompleted] = useState([])
+  const [myOrders, setMyOrders] = useState([])
   const [cartLoading, setCartLoading] = useState(false)
 
   const _getProducts = async payload => {
@@ -126,7 +130,13 @@ function AppMenu () {
     }
   }
 
-  const _getAdminOrders = async (payload, half_pack, confirm) => {
+  const _getAdminOrders = async (
+    payload,
+    half_pack,
+    confirm,
+    active,
+    history
+  ) => {
     try {
       const token = await AsyncStorage.getItem('token')
       const body = payload ? payload : ''
@@ -135,8 +145,27 @@ function AppMenu () {
         setAdminOrdersHalf(res?.data)
       } else if (confirm) {
         setAdminOrdersConfirm(res?.data)
+      } else if (active) {
+        setAdminOrdersActive(res?.data)
+      } else if (history) {
+        setAdminOrdersHistory(res?.data)
       } else {
         setAdminOrders(res?.data)
+      }
+    } catch (error) {
+      const errorText = Object.values(error?.response?.data)
+      alert(`Error: ${errorText[0]}`)
+    }
+  }
+  const _getMyOrders = async (payload, completed) => {
+    try {
+      const token = await AsyncStorage.getItem('token')
+      const body = payload ? payload : ''
+      const res = await getMyOrders(body, token)
+      if (completed) {
+        setMyOrdersCompleted(res?.data)
+      } else {
+        setMyOrders(res?.data)
       }
     } catch (error) {
       const errorText = Object.values(error?.response?.data)
@@ -170,7 +199,12 @@ function AppMenu () {
         adminOrders,
         adminOrdersHalf,
         adminOrdersConfirm,
-        _getAdminOrders
+        adminOrdersActive,
+        adminOrdersHistory,
+        _getAdminOrders,
+        myOrders,
+        myOrdersCompleted,
+        _getMyOrders
       }}
     >
       <RootStackNav />

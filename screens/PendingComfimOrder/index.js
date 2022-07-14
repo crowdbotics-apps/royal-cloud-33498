@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   View,
   StyleSheet,
@@ -32,12 +32,19 @@ export default function PendingComfimOrder ({}) {
     adminOrders,
     adminOrdersHalf,
     adminOrdersConfirm,
-    _getAdminProducts
+    _getAdminProducts,
+    _getAdminOrders
   } = context
   const [state, setState] = useState({
     loading: false,
     active: 0
   })
+
+  useEffect(() => {
+    _getAdminOrders('?half_pack=false')
+    _getAdminOrders('?half_pack=true', true)
+    _getAdminOrders('?status=Confirmed', false, true)
+  }, [])
 
   const handleChange = (name, value) => {
     setState(pre => ({ ...pre, [name]: value }))
@@ -65,7 +72,7 @@ export default function PendingComfimOrder ({}) {
     }
   }
 
-  console.warn('adminOrders', adminOrders)
+  console.warn('adminOrdersConfirm', adminOrdersConfirm)
 
   const { loading, active } = state
   if (loading) {

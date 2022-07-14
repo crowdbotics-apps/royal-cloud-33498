@@ -4,6 +4,10 @@ export const getProducts = (payload, token) => {
   return API.get(`api/v1/products/${payload}`, token)
 }
 
+export const getMyOrders = (payload, token) => {
+  return API.get(`api/v1/orders/${payload}`, token)
+}
+
 export const addToCart = (payload, token) => {
   return API.post(`api/v1/cart/`, payload, token)
 }

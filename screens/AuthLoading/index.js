@@ -43,7 +43,7 @@ function AuthLoading ({ navigation }) {
         _getAdminProducts('')
         _getAdminOrders('?half_pack=false')
         _getAdminOrders('?half_pack=true', true)
-        _getAdminOrders('?status=Completed', false, true)
+        _getAdminOrders('?status=Confirmed', false, true)
         navigation.navigate('AdminPanel')
         return
       }
