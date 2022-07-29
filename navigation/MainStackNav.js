@@ -20,6 +20,7 @@ import ListProduct from '../screens/UploadContent/ListProduct'
 import ProductDetails from '../screens/UploadContent/ProductDetails'
 import PendingComfimOrder from '../screens/PendingComfimOrder'
 import OrderDetails from '../screens/PendingComfimOrder/OrderDetails'
+import UserOrders from '../screens/PendingComfimOrder/UserOrders'
 
 const Stack = createStackNavigator()
 function MainStackNav () {
@@ -50,6 +51,7 @@ function MainStackNav () {
       <Stack.Screen name='ListProduct' component={ListProduct} />
       <Stack.Screen name='PendingComfimOrder' component={PendingComfimOrder} />
       <Stack.Screen name='OrderDetails' component={OrderDetails} />
+      <Stack.Screen name='UserOrders' component={UserOrders} />
     </Stack.Navigator>
   )
 }

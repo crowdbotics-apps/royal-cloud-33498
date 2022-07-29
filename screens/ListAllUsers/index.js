@@ -134,7 +134,16 @@ function ListAllUsers ({ navigation }) {
                     }
                   />
                   <View style={styles.textContainer}>
-                    <Text>{item?.name + item?.last_name}</Text>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate('UserOrders', {
+                          userID: item?.id,
+                          user: item
+                        })
+                      }
+                    >
+                      <Text>{item?.name + item?.last_name}</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() => _updateUser(item?.id, !item?.flagged)}
                     >

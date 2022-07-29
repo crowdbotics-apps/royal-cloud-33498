@@ -59,3 +59,19 @@ export const getAdminOrders = (payload, token) => {
 export const getOrderDetails = (id, token) => {
   return API.get(`api/v1/orders/${id}/`, token)
 }
+
+export const getOrderDetailsList = (payload, token) => {
+  return API.get(`api/v1/admin/orders/invoice_list/${payload}`, token)
+}
+
+export const updateOrder = (id, payload, token) => {
+  return API.patch(`api/v1/orders/${id}/`, payload, token)
+}
+
+export const markAsConfirmOrder = (payload, token) => {
+  return API.get(`api/v1/admin/orders/confirm/${payload}`, token)
+}
+
+export const sendInvoice = (payload, token) => {
+  return API.get(`api/v1/admin/orders/submit_invoice/${payload}`, token)
+}

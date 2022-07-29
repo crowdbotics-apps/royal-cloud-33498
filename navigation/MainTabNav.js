@@ -6,6 +6,7 @@ import Home from '../screens/Home'
 import { COLORS } from '../constants'
 import Settings from '../screens/Settings'
 import Products from '../screens/Products'
+import MyOrders from '../screens/MyOrders'
 import Inventory from '../screens/Products/Inventory'
 import InventoryDetails from '../screens/Products/Details'
 import Cart from '../screens/Cart'
@@ -25,6 +26,7 @@ function MainTabNav () {
       tabBar={props => <TabBar {...props} />}
     >
       <Tab.Screen name='Home' component={HomeStack} />
+      <Tab.Screen name='User' component={MyOrders} />
       <Tab.Screen name='Cart' component={Cart} />
       <Tab.Screen name='Settings' component={SettingsStack} />
       <Tab.Screen name='Inventory' component={InventoryStack} />

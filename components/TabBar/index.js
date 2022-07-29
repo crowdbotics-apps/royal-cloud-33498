@@ -10,6 +10,7 @@ import Tab3IconActive from '../../assets/svg/tabs/settingsFill.svg'
 import Tab3Icon from '../../assets/svg/tabs/settings.svg'
 import Tab2Icon from '../../assets/svg/tabs/cart.svg'
 import Tab2IconActive from '../../assets/svg/tabs/cartFill.svg'
+import profileIcon from '../../assets/svg/tabs/profileIcon.svg'
 import { COLORS, FONT1REGULAR } from '../../constants'
 
 function TabBar ({ state, descriptors, navigation }) {
@@ -64,6 +65,20 @@ function TabBar ({ state, descriptors, navigation }) {
                       >
                         <SvgXml
                           xml={isFocused ? Tab1IconActive : Tab1Icon}
+                          width={25}
+                          height={25}
+                        />
+                      </View>
+                    )
+                  case 'User':
+                    return (
+                      <View
+                        style={
+                          isFocused ? styles.activeTab : styles.inActiveTab
+                        }
+                      >
+                        <SvgXml
+                          xml={profileIcon}
                           width={25}
                           height={25}
                         />

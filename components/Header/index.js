@@ -17,7 +17,8 @@ export default function Header ({
   menu,
   menuClick,
   tab,
-  tabText
+  tabText,
+  titleCap
 }) {
   const navigation = useNavigation()
 
@@ -46,7 +47,16 @@ export default function Header ({
           <View style={styles.activeline} />
         </View>
       )}
-      {title && <Text style={styles.title}>{title}</Text>}
+      {title && (
+        <Text
+          style={[
+            styles.title,
+            { textTransform: titleCap ? 'capitalize' : 'none' }
+          ]}
+        >
+          {title}
+        </Text>
+      )}
       {menu && (
         <TouchableOpacity onPress={menuClick} style={styles.menuView}>
           <SvgXml xml={menuIcon} />
